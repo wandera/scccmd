@@ -26,9 +26,6 @@ before_install:
 - chmod +x $GOPATH/bin/dep
 # Get golint
 - go get github.com/golang/lint/golint
-# Update docker package
-- sudo apt-get update
-- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
 install:
 - dep ensure

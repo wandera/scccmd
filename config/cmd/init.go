@@ -18,11 +18,9 @@ var (
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize the config from the given config server",
-	RunE:  executeInitDelegate,
-}
-
-func executeInitDelegate(cmd *cobra.Command, args []string) error {
-	return executeInit(args)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return executeInit(args)
+	},
 }
 
 func executeInit(args []string) error {

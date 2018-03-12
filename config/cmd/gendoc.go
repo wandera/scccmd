@@ -10,11 +10,9 @@ var docDestination string
 var genDocCmd = &cobra.Command{
 	Use:   "gendoc",
 	Short: "Generates documentation for this tool in Markdown format",
-	RunE:  executeGenDocDelegate,
-}
-
-func executeGenDocDelegate(cmd *cobra.Command, args []string) error {
-	return executeGenDoc(args)
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return executeGenDoc(args)
+	},
 }
 
 func executeGenDoc(args []string) error {

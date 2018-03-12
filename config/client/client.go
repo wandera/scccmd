@@ -43,7 +43,7 @@ type client struct {
 	config *Config
 }
 
-//NewClient
+//NewClient creates instance of the Client
 func NewClient(c Config) (Client) {
 	client := &client{
 		config: &c,

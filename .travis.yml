@@ -1,4 +1,5 @@
 language: go
+go:
 - "1.10"
 env:
 - DEP_VERSION="0.4.1"
@@ -10,4 +11,4 @@ before_install:
 install:
 - dep ensure
 
-script: go test ./...
+script: go test -v ./...

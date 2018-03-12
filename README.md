@@ -1,5 +1,7 @@
 # scccmd - Spring Cloud Config cli tool
 
+[![Build Status](https://travis-ci.org/WanderaOrg/scccmd.svg?branch=master)](https://travis-ci.org/WanderaOrg/scccmd)
+
 Tool for obtaining configuration from config server
 
 ### How to develop

@@ -10,7 +10,7 @@ COPY Gopkg.toml Gopkg.lock ./
 RUN dep ensure -vendor-only
 
 COPY config/ .
-RUN go test -v ./... && CGO_ENABLED=0 go build -o ../bin/config
+RUN CGO_ENABLED=0 go build -o ../bin/config
 
 
 # Runtime image

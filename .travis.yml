@@ -8,6 +8,11 @@ go:
 - "1.10"
 - master
 
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+
 matrix:
   # It's ok if our code fails on unstable development versions of Go.
   allow_failures:
@@ -26,9 +31,6 @@ before_install:
 - chmod +x $GOPATH/bin/dep
 # Get golint
 - go get github.com/golang/lint/golint
-# Update docker package
-- sudo apt-get update
-- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
 
 install:
 - dep ensure
@@ -37,15 +39,3 @@ script:
 - go test -v ./...
 - go vet -v ./...
 - golint -set_exit_status $(go list ./...)
-
-# TODO docker repo
-#deploy:
-#  provider: script
-#  script:
-#    - docker build -t scccmd .
-#    - docker tag scccmd wandera/scccmd
-#    - case $TRAVIS_BRANCH in master) LABEL=latest;; ^V.+) LABEL=$TRAVIS_BRANCH;; esac
-#    - docker push wandera/scccmd:$LABEL
-#  on:
-#    all_branches: true
-#    condition: "$TRAVIS_BRANCH =~ '^V.+' || $TRAVIS_BRANCH == 'master'"

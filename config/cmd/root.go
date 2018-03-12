@@ -11,8 +11,7 @@ var rootCmd = &cobra.Command{
 	Use:               "config",
 	DisableAutoGenTag: true,
 	Short:             "Spring Cloud Config management tool",
-	Long:
-	`Commandline tool used for managing configuration from Spring Cloud Config Server.
+	Long: `Commandline tool used for managing configuration from Spring Cloud Config Server.
 Tool currently provides functionality t get (download) config file from server.`,
 }
 

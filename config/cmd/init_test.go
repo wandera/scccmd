@@ -25,7 +25,7 @@ func TestExecute(t *testing.T) {
 		label        string
 		srcFileName  string
 		destFileName string
-		requestUri   string
+		requestURI   string
 	}{
 		{"{\"foo\":\"bar\"}",
 			"app",
@@ -53,8 +53,8 @@ func TestExecute(t *testing.T) {
 	for _, tp := range testParams {
 		func() {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.RequestURI != tp.requestUri {
-					t.Error(fmt.Sprintf("Expected call to '%s' but got '%s' instead.", tp.requestUri, r.RequestURI))
+				if r.RequestURI != tp.requestURI {
+					t.Error(fmt.Sprintf("Expected call to '%s' but got '%s' instead.", tp.requestURI, r.RequestURI))
 				}
 
 				fmt.Fprintln(w, tp.testContent)

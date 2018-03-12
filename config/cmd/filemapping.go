@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -9,11 +8,13 @@ import (
 const mappingSeparator = ","
 const sourceDestSeparator = ":"
 
+//FileMapping single file mapping source:dest
 type FileMapping struct {
 	source      string
 	destination string
 }
 
+//FileMappings file mappings source:dest,source:dest...
 type FileMappings struct {
 	mappings []FileMapping
 }
@@ -22,6 +23,7 @@ func (m *FileMappings) String() string {
 	return ""
 }
 
+//Set parse mappings from string
 func (m *FileMappings) Set(value string) error {
 	mappings := strings.Split(value, mappingSeparator)
 
@@ -29,7 +31,7 @@ func (m *FileMappings) Set(value string) error {
 	for i, rawMapping := range mappings {
 		mapping := strings.Split(rawMapping, sourceDestSeparator)
 		if len(mapping) != 2 {
-			return errors.New(fmt.Sprintf("Unable to create mapping from: %s", value))
+			return fmt.Errorf("unable to create mapping from: %s", value)
 		}
 
 		m.mappings[i].source = mapping[0]
@@ -39,14 +41,17 @@ func (m *FileMappings) Set(value string) error {
 	return nil
 }
 
+//Type type name (for cobra)
 func (m *FileMappings) Type() string {
-	return "fileMappings"
+	return "FileMappings"
 }
 
+//Mappings all mappings
 func (m *FileMappings) Mappings() []FileMapping {
 	return m.mappings
 }
 
+//Sources all sources
 func (m *FileMappings) Sources() []string {
 	sources := make([]string, len(m.mappings))
 	for i, mapping := range m.mappings {
@@ -56,6 +61,7 @@ func (m *FileMappings) Sources() []string {
 	return sources
 }
 
+//Destinations all destinations
 func (m *FileMappings) Destinations() []string {
 	destinations := make([]string, len(m.mappings))
 	for i, mapping := range m.mappings {

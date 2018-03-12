@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+//Verbose verbose logging turned on
 var Verbose bool
 
 var rootCmd = &cobra.Command{
@@ -21,9 +22,7 @@ func init() {
 	rootCmd.AddCommand(genDocCmd)
 }
 
+//Execute run root command (main entrypoint)
 func Execute() error {
-	if err := rootCmd.Execute(); err != nil {
-		return err
-	}
-	return nil
+	return rootCmd.Execute()
 }

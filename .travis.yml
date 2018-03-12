@@ -1,14 +1,51 @@
+sudo: required
+
+services:
+- docker
+
 language: go
 go:
 - "1.10"
+- master
+
+matrix:
+  # It's ok if our code fails on unstable development versions of Go.
+  allow_failures:
+  - go: master
+  # Don't wait for tip tests to finish. Mark the test run green if the
+  # tests pass on the stable versions of Go.
+  fast_finish: true
+
 env:
 - DEP_VERSION="0.4.1"
+
 before_install:
 # Download the binary to bin folder in $GOPATH
 - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
 # Make the binary executable
 - chmod +x $GOPATH/bin/dep
+# Get golint
+- go get github.com/golang/lint/golint
+# Update docker package
+- sudo apt-get update
+- sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+
 install:
 - dep ensure
 
-script: go test -v ./...
+script:
+- go test -v ./...
+- go vet -v ./...
+- golint -set_exit_status $(go list ./...)
+
+# TODO docker repo
+#deploy:
+#  provider: script
+#  script:
+#    - docker build -t scccmd .
+#    - docker tag scccmd wandera/scccmd
+#    - case $TRAVIS_BRANCH in master) LABEL=latest;; ^V.+) LABEL=$TRAVIS_BRANCH;; esac
+#    - docker push wandera/scccmd:$LABEL
+#  on:
+#    all_branches: true
+#    condition: "$TRAVIS_BRANCH =~ '^V.+' || $TRAVIS_BRANCH == 'master'"

@@ -28,21 +28,10 @@ func TestNewClient(t *testing.T) {
 		Label:       tp.label,
 	})
 
-	if c.Config().URI != tp.URI {
-		t.Error("Incorrect URI ", assertString(c.Config().URI, tp.URI))
-	}
-
-	if c.Config().Application != tp.application {
-		t.Error("Incorrect Application ", assertString(c.Config().Application, tp.application))
-	}
-
-	if c.Config().Profile != tp.profile {
-		t.Error("Incorrect Profile ", assertString(c.Config().Profile, tp.profile))
-	}
-
-	if c.Config().Label != tp.label {
-		t.Error("Incorrect Label ", assertString(c.Config().Label, tp.label))
-	}
+	assertString(t, "Incorrect URI", tp.URI, c.Config().URI)
+	assertString(t, "Incorrect Application", tp.application, c.Config().Application)
+	assertString(t, "Incorrect Profile", tp.profile, c.Config().Profile)
+	assertString(t, "Incorrect Label", tp.label, c.Config().Label)
 }
 
 func TestClient_FetchFile(t *testing.T) {
@@ -63,10 +52,7 @@ func TestClient_FetchFile(t *testing.T) {
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.RequestURI != tp.URI {
-			t.Error(fmt.Sprintf("Expected call to '%s' but got '%s' instead.", tp.URI, r.RequestURI))
-		}
-
+		assertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 		fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()
@@ -82,9 +68,7 @@ func TestClient_FetchFile(t *testing.T) {
 		t.Error("FetchFile failed with: ", err)
 	}
 
-	if gotContent := strings.TrimRight(string(cont), "\n"); gotContent != tp.testContent {
-		t.Error("Content mismatch ", assertString(tp.testContent, gotContent))
-	}
+	assertString(t, "Content mismatch", tp.testContent, string(cont))
 }
 
 func TestClient_FetchAsYAML(t *testing.T) {
@@ -105,10 +89,7 @@ func TestClient_FetchAsYAML(t *testing.T) {
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.RequestURI != tp.URI {
-			t.Error(fmt.Sprintf("Expected call to '%s' but got '%s' instead.", tp.URI, r.RequestURI))
-		}
-
+		assertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 		fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()
@@ -124,11 +105,17 @@ func TestClient_FetchAsYAML(t *testing.T) {
 		t.Error("FetchFile failed with: ", err)
 	}
 
-	if gotContent := strings.TrimRight(string(cont), "\n"); gotContent != tp.testContent {
-		t.Error("Content mismatch ", assertString(tp.testContent, gotContent))
+	assertString(t, "Content mismatch", tp.testContent, cont)
+}
+
+func assertString(t *testing.T, message string, expected string, got string) {
+	expected = trimString(expected)
+	got = trimString(got)
+	if expected != got {
+		t.Error(fmt.Sprintf("%s: expected %s but got %s instead", message, expected, got))
 	}
 }
 
-func assertString(expected string, got string) string {
-	return fmt.Sprintf("expected %s but got %s instead", expected, got)
+func trimString(s string) string {
+	return strings.TrimRight(s, "\n")
 }

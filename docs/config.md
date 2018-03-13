@@ -17,5 +17,5 @@ Tool currently provides functionality t get (download) config file from server.
 
 ### SEE ALSO
 * [config gendoc](config_gendoc.md)	 - Generates documentation for this tool in Markdown format
-* [config init](config_init.md)	 - Initialize the config from the given config server
+* [config get](config_get.md)	 - Get the config from the given config server
 

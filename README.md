@@ -15,7 +15,7 @@ Tool for obtaining configuration from config server
 * Or if you dont want to setup your local go env just use the provided Dockerfile
 
 ### Docker repository
-https://hub.docker.com/r/wanderadock/scccmd/
+Tool is released as docker image as well, check the [repository](https://hub.docker.com/r/wanderadock/scccmd/).
 
 ### Tool documentation
 [docs](docs/config.md)	 - Generated documentation for the tool

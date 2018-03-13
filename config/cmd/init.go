@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/go-resty/resty"
 	"github.com/spf13/cobra"
 	"io/ioutil"
+	"github.com/wanderaorg/scccmd/config/client"
 )
 
 var (
@@ -25,24 +25,20 @@ var initCmd = &cobra.Command{
 
 func executeInit(args []string) error {
 	for _, mapping := range fileMappings.Mappings() {
-		resp, err := resty.R().SetPathParams(map[string]string{
-			"application": application,
-			"profile":     profile,
-			"label":       label,
-			"path":        mapping.source,
-		}).Get(fmt.Sprintf("%s/{application}/{profile}/{label}/{path}", source))
+		resp, err := client.
+			NewClient(client.Config{URI: source, Profile: profile, Application: application, Label: label}).
+			FetchFile(mapping.source)
 
 		if err != nil {
 			return err
 		}
 
 		if Verbose {
-			fmt.Println("Config server request: ", resp.Request.URL)
 			fmt.Println("Config server response:")
 			fmt.Println(resp)
 		}
 
-		if err = ioutil.WriteFile(mapping.destination, resp.Body(), 0644); err != nil {
+		if err = ioutil.WriteFile(mapping.destination, resp, 0644); err != nil {
 			return err
 		}
 
@@ -61,5 +57,5 @@ func init() {
 	initCmd.Flags().VarP(&fileMappings, "files", "f", "files to get in form of source:destination pairs, example '--files application.yaml:config.yaml'")
 	initCmd.MarkFlagRequired("source")
 	initCmd.MarkFlagRequired("application")
-	initCmd.MarkFlagRequired("paths")
+	initCmd.MarkFlagRequired("files")
 }

@@ -56,24 +56,24 @@ func (c *client) Config() *Config {
 	return c.config
 }
 
-//FetchFile
+//FetchFile queries the remote configuration service and returns the resulting file
 func (c *client) FetchFile(source string) ([]byte, error) {
 	resp, err := resty.R().Get(c.formatFileURI(source))
 
 	return resp.Body(), err
 }
 
-//FetchAsProperties
+//FetchAsProperties queries the remote configuration service and returns the result as a Properties string
 func (c *client) FetchAsProperties() (string, error) {
 	return c.fetchAsString(properties)
 }
 
-//FetchAsJSON
+//FetchAsJSON queries the remote configuration service and returns the result as a JSON string
 func (c *client) FetchAsJSON() (string, error) {
 	return c.fetchAsString(json)
 }
 
-//FetchAsYAML
+//FetchAsYAML queries the remote configuration service and returns the result as a YAML string
 func (c *client) FetchAsYAML() (string, error) {
 	return c.fetchAsString(yaml)
 }

@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/WanderaOrg/scccmd/config/client"
 	"github.com/spf13/cobra"
 	"io/ioutil"
-	"github.com/WanderaOrg/scccmd/config/client"
 )
 
 var (
@@ -69,7 +69,6 @@ func executeGetValues(args []string) error {
 	} else {
 		fmt.Print(resp)
 	}
-
 
 	return nil
 }

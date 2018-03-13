@@ -71,7 +71,7 @@ type client struct {
 }
 
 //NewClient creates instance of the Client
-func NewClient(c Config) (Client) {
+func NewClient(c Config) Client {
 	client := &client{
 		config: &c,
 	}

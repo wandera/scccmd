@@ -17,7 +17,7 @@ Tool currently provides functionality t get (download) config file from server.`
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
-	rootCmd.AddCommand(initCmd)
+	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(genDocCmd)
 }
 

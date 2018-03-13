@@ -3,14 +3,38 @@ package client
 import (
 	"fmt"
 	"github.com/go-resty/resty"
+	"strings"
 )
+
+//Extension format of downloaded config
+type Extension string
+
+//ParseExtension parse string into Extension type
+func ParseExtension(str string) (Extension, error) {
+	switch value := strings.TrimRight(str, "/n"); value {
+	case "json":
+		return json, nil
+	case "properties":
+		return properties, nil
+	case "yaml":
+		return yaml, nil
+	case "yml":
+		return yaml, nil
+	default:
+		return unknown, fmt.Errorf("failed to parse extension: '%s'", str)
+	}
+}
 
 const (
 	configPathFmt     = "%s/%s/%s-%s.%s"
 	configFilePathFmt = "%s/%s/%s/%s/%s"
-	json              = "json"
-	properties        = "properties"
-	yaml              = "yml"
+)
+
+const (
+	json       Extension = "json"
+	properties Extension = "properties"
+	yaml       Extension = "yml"
+	unknown    Extension = "_"
 )
 
 //Client Spring Cloud Config Client
@@ -20,6 +44,9 @@ type Client interface {
 
 	//FetchFile queries the remote configuration service and returns the resulting file
 	FetchFile(source string) ([]byte, error)
+
+	//FetchAs queries the remote configuration service and returns the result in specified format
+	FetchAs(extension Extension) (string, error)
 
 	//FetchAsJSON queries the remote configuration service and returns the result as a JSON string
 	FetchAsJSON() (string, error)
@@ -65,25 +92,26 @@ func (c *client) FetchFile(source string) ([]byte, error) {
 
 //FetchAsProperties queries the remote configuration service and returns the result as a Properties string
 func (c *client) FetchAsProperties() (string, error) {
-	return c.fetchAsString(properties)
+	return c.FetchAs(properties)
 }
 
 //FetchAsJSON queries the remote configuration service and returns the result as a JSON string
 func (c *client) FetchAsJSON() (string, error) {
-	return c.fetchAsString(json)
+	return c.FetchAs(json)
 }
 
 //FetchAsYAML queries the remote configuration service and returns the result as a YAML string
 func (c *client) FetchAsYAML() (string, error) {
-	return c.fetchAsString(yaml)
+	return c.FetchAs(yaml)
 }
 
-func (c *client) fetchAsString(extension string) (string, error) {
+//FetchAs queries the remote configuration service and returns the result in specified format
+func (c *client) FetchAs(extension Extension) (string, error) {
 	resp, err := resty.R().Get(c.formatURI(extension))
 	return resp.String(), err
 }
 
-func (c *client) formatURI(extension string) string {
+func (c *client) formatURI(extension Extension) string {
 	return fmt.Sprintf(configPathFmt, c.config.URI, c.config.Label, c.config.Application, c.config.Profile, extension)
 }
 

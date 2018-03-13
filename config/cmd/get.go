@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"io/ioutil"
-	"github.com/wanderaorg/scccmd/config/client"
+	"github.com/WanderaOrg/scccmd/config/client"
 )
 
 var (

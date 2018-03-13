@@ -33,7 +33,7 @@ before_install:
 - go get github.com/golang/lint/golint
 
 install:
-- dep ensure
+- dep ensure -vendor-only
 
 script:
 - go test -v ./...

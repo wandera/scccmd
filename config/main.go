@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/wanderaorg/scccmd/config/cmd"
+	"github.com/WanderaOrg/scccmd/config/cmd"
 	"os"
 )
 

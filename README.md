@@ -1,6 +1,7 @@
 # scccmd - Spring Cloud Config cli tool
 
 [![Build Status](https://travis-ci.org/WanderaOrg/scccmd.svg?branch=master)](https://travis-ci.org/WanderaOrg/scccmd)
+[![Docker Build Status](https://img.shields.io/docker/build/fluffycroc/scccmd.svg)](https://hub.docker.com/r/fluffycroc/scccmd/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/WanderaOrg/scccmd)](https://goreportcard.com/report/github.com/WanderaOrg/scccmd)
 [![GitHub release](https://img.shields.io/github/release/WanderaOrg/scccmd.svg)](https://github.com/WanderaOrg/scccmd/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/WanderaOrg/scccmd/blob/master/LICENSE)

@@ -3,12 +3,13 @@ package client
 import (
 	"fmt"
 	"github.com/go-resty/resty"
-	"errors"
 	"strings"
 )
 
+//Extension format of downloaded config
 type Extension string
 
+//ParseExtension parse string into Extension type
 func ParseExtension(str string) (Extension, error) {
 	switch value := strings.TrimRight(str, "/n"); value {
 	case "json":
@@ -20,7 +21,7 @@ func ParseExtension(str string) (Extension, error) {
 	case "yml":
 		return yaml, nil
 	default:
-		return unknown, errors.New(fmt.Sprintf("failed to parse extension: '%s'", str))
+		return unknown, fmt.Errorf("failed to parse extension: '%s'", str)
 	}
 }
 

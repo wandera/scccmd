@@ -85,7 +85,7 @@ func executeGetFiles(args []string) error {
 
 		if Verbose {
 			fmt.Println("Config server response:")
-			fmt.Println(resp)
+			fmt.Println(string(resp))
 		}
 
 		if err = ioutil.WriteFile(mapping.destination, resp, 0644); err != nil {

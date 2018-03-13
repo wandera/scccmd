@@ -54,7 +54,7 @@ func TestExecuteGetFiles(t *testing.T) {
 		func() {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				if r.RequestURI != tp.requestURI {
-					t.Error(fmt.Sprintf("Expected call to '%s' but got '%s' instead.", tp.requestURI, r.RequestURI))
+					t.Errorf("Expected call to '%s' but got '%s' instead.", tp.requestURI, r.RequestURI)
 				}
 
 				fmt.Fprintln(w, tp.testContent)
@@ -79,7 +79,7 @@ func TestExecuteGetFiles(t *testing.T) {
 			}
 
 			if response := strings.TrimRight(string(raw[:]), "\n"); response != tp.testContent {
-				t.Error(fmt.Sprintf("Expected response: '%s' got '%s' instead.", tp.testContent, response))
+				t.Errorf("Expected response: '%s' got '%s' instead.", tp.testContent, response)
 			}
 		}()
 	}
@@ -118,7 +118,7 @@ func TestExecuteGetValues(t *testing.T) {
 		func() {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				if r.RequestURI != tp.requestURI {
-					t.Error(fmt.Sprintf("Expected call to '%s' but got '%s' instead.", tp.requestURI, r.RequestURI))
+					t.Errorf("Expected call to '%s' but got '%s' instead.", tp.requestURI, r.RequestURI)
 				}
 
 				fmt.Fprintln(w, tp.testContent)
@@ -142,7 +142,7 @@ func TestExecuteGetValues(t *testing.T) {
 			}
 
 			if response := strings.TrimRight(string(raw[:]), "\n"); response != tp.testContent {
-				t.Error(fmt.Sprintf("Expected response: '%s' got '%s' instead.", tp.testContent, response))
+				t.Errorf("Expected response: '%s' got '%s' instead.", tp.testContent, response)
 			}
 		}()
 	}

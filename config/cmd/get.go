@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/WanderaOrg/scccmd/config/client"
 	"github.com/spf13/cobra"
 	"io/ioutil"
-	"github.com/WanderaOrg/scccmd/config/client"
 )
 
 var (
@@ -70,7 +70,6 @@ func executeGetValues(args []string) error {
 		fmt.Print(resp)
 	}
 
-
 	return nil
 }
 
@@ -86,7 +85,7 @@ func executeGetFiles(args []string) error {
 
 		if Verbose {
 			fmt.Println("Config server response:")
-			fmt.Println(resp)
+			fmt.Println(string(resp))
 		}
 
 		if err = ioutil.WriteFile(mapping.destination, resp, 0644); err != nil {

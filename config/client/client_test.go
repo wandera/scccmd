@@ -1,11 +1,11 @@
 package client
 
 import (
-	"testing"
 	"fmt"
-	"net/http/httptest"
 	"net/http"
+	"net/http/httptest"
 	"strings"
+	"testing"
 )
 
 func TestNewClient(t *testing.T) {
@@ -112,7 +112,7 @@ func assertString(t *testing.T, message string, expected string, got string) {
 	expected = trimString(expected)
 	got = trimString(got)
 	if expected != got {
-		t.Error(fmt.Sprintf("%s: expected %s but got %s instead", message, expected, got))
+		t.Errorf("%s: expected %s but got %s instead", message, expected, got)
 	}
 }
 

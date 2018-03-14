@@ -277,10 +277,15 @@ func restConfig() (*rest.Config, error) {
 		loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 		configOverrides := &clientcmd.ConfigOverrides{}
 		kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
+		if Verbose {
+			fmt.Println("Loading kubeconfig cluster configuration")
+		}
 		return kubeConfig.ClientConfig()
-	} else {
-		return rest.InClusterConfig()
 	}
+	if Verbose {
+		fmt.Println("Loading incluster cluster configuration")
+	}
+	return rest.InClusterConfig()
 }
 
 func defaultIfEmpty(val *string, def string) {

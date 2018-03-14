@@ -1,0 +1,49 @@
+apiVersion: admissionregistration.k8s.io/v1alpha1
+kind: InitializerConfiguration
+metadata:
+  name: config
+initializers:
+- name: config.initializer.kubernetes.io
+  rules:
+  - apiGroups:
+    - "*"
+    apiVersions:
+    - "*"
+    resources:
+    - deployments
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: initializer-config
+  namespace: default
+data:
+  container-image: wanderadock/scccmd:latest
+  default-label: master
+  default-profile: development
+  default-volume-name: config
+  default-server-address: 'http://config-manager-controller.default.svc:8080'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-injector-controller
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: config-injector-controller
+  template:
+    metadata:
+      labels:
+        app: config-injector-controller
+    spec:
+      containers:
+      - name: config-injector-controller
+        image: wanderadock/scccmd:latest
+        args:
+        - initializer
+        - --namespace=default
+        - --configmap=initializer-config
+        - --initializer-name=config.initializer.kubernetes.io
+        - --watched-namespace=default

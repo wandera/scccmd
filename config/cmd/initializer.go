@@ -225,15 +225,15 @@ func calculateDynamicConfig(c *config, a map[string]string, deployment *v1.Deplo
 	var d = dynamicConfig{}
 	var ok bool
 
-	if d.containerName, ok = a[c.AnnotationPrefix+"container-name"]; ok {
+	if d.containerName, ok = a[c.AnnotationPrefix+"container-name"]; !ok {
 		d.containerName = c.DefaultContainerName
 	}
 
-	if d.volumeName, ok = a[c.AnnotationPrefix+"volume-name"]; ok {
+	if d.volumeName, ok = a[c.AnnotationPrefix+"volume-name"]; !ok {
 		d.volumeName = c.DefaultVolumeName
 	}
 
-	if d.volumeMount, ok = a[c.AnnotationPrefix+"volume-mount"]; ok {
+	if d.volumeMount, ok = a[c.AnnotationPrefix+"volume-mount"]; !ok {
 		d.volumeMount = c.DefaultVolumeMount
 	}
 
@@ -275,6 +275,10 @@ func calculateImageArgs(c *config, a map[string]string, deployment *v1.Deploymen
 
 	if application, ok = a[c.AnnotationPrefix+"application"]; !ok {
 		application = deployment.Name
+	}
+
+	if Verbose {
+		extra = append(extra, "-v")
 	}
 
 	return append([]string{"get", mode, "--source", source, "--application", application, "--profile", profile, "--label", label}, extra...), nil

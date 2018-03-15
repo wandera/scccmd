@@ -35,12 +35,18 @@ type config struct {
 	DefaultSource        string `yaml:"default-source"`
 }
 
+type dynamicConfig struct {
+	containerName string
+	volumeName    string
+	volumeMount   string
+	imageArgs     []string
+}
+
 var ip = struct {
-	configmap        string
-	initializerName  string
-	namespace        string
-	watchedNamespace string
-	kubeconfig       bool
+	configmap       string
+	initializerName string
+	namespace       string
+	kubeconfig      bool
 }{}
 
 var initializerCmd = &cobra.Command{
@@ -81,7 +87,7 @@ func executeInitializer(args []string) error {
 
 	// Watch uninitialized Deployments in all namespaces.
 	restClient := clientset.AppsV1().RESTClient()
-	watchlist := cache.NewListWatchFromClient(restClient, "deployments", ip.watchedNamespace, fields.Everything())
+	watchlist := cache.NewListWatchFromClient(restClient, "deployments", corev1.NamespaceAll, fields.Everything())
 
 	// Wrap the returned watchlist to workaround the inability to include
 	// the `IncludeUninitialized` list option when setting up watch clients.
@@ -159,21 +165,21 @@ func initializeDeployment(deployment *v1.Deployment, c *config, clientset *kuber
 				fmt.Printf("Patching deployment '%s'\n", deployment.Name)
 			}
 
-			volumeMount := corev1.VolumeMount{
-				Name:      c.DefaultVolumeName,
-				MountPath: c.DefaultVolumeMount,
-			}
-
-			// Add InitContainer
-			args, err := calculateImageArgs(c, a, initializedDeployment)
+			d, err := calculateDynamicConfig(c, a, deployment)
 			if err != nil {
 				return err
 			}
 
+			volumeMount := corev1.VolumeMount{
+				Name:      d.volumeName,
+				MountPath: d.volumeMount,
+			}
+
+			// Add InitContainer
 			initializedDeployment.Spec.Template.Spec.InitContainers = append(deployment.Spec.Template.Spec.InitContainers, corev1.Container{
-				Name:         c.DefaultContainerName,
+				Name:         d.containerName,
 				Image:        c.ContainerImage,
-				Args:         args,
+				Args:         d.imageArgs,
 				VolumeMounts: []corev1.VolumeMount{volumeMount},
 			})
 
@@ -182,7 +188,7 @@ func initializeDeployment(deployment *v1.Deployment, c *config, clientset *kuber
 
 			// Add volume definition
 			initializedDeployment.Spec.Template.Spec.Volumes = append(deployment.Spec.Template.Spec.Volumes, corev1.Volume{
-				Name:         c.DefaultVolumeName,
+				Name:         volumeMount.Name,
 				VolumeSource: corev1.VolumeSource{EmptyDir: &corev1.EmptyDirVolumeSource{}},
 			})
 
@@ -213,6 +219,27 @@ func initializeDeployment(deployment *v1.Deployment, c *config, clientset *kuber
 	}
 
 	return nil
+}
+
+func calculateDynamicConfig(c *config, a map[string]string, deployment *v1.Deployment) (*dynamicConfig, error) {
+	var d = dynamicConfig{}
+	var ok bool
+
+	if d.containerName, ok = a[c.AnnotationPrefix+"container-name"]; ok {
+		d.containerName = c.DefaultContainerName
+	}
+
+	if d.volumeName, ok = a[c.AnnotationPrefix+"volume-name"]; ok {
+		d.volumeName = c.DefaultVolumeName
+	}
+
+	if d.volumeMount, ok = a[c.AnnotationPrefix+"volume-mount"]; ok {
+		d.volumeMount = c.DefaultVolumeMount
+	}
+
+	imageArgs, err := calculateImageArgs(c, a, deployment)
+	d.imageArgs = imageArgs
+	return &d, err
 }
 
 func calculateImageArgs(c *config, a map[string]string, deployment *v1.Deployment) ([]string, error) {
@@ -298,6 +325,5 @@ func init() {
 	initializerCmd.Flags().StringVarP(&ip.namespace, "namespace", "n", "default", "The configuration namespace")
 	initializerCmd.Flags().StringVarP(&ip.configmap, "configmap", "c", "initializer-config", "The config initializer configuration configmap")
 	initializerCmd.Flags().StringVarP(&ip.initializerName, "initializer-name", "i", "config.initializer.kubernetes.io", "The initializer name")
-	initializerCmd.Flags().StringVarP(&ip.watchedNamespace, "watched-namespace", "e", corev1.NamespaceAll, "The initializer watched namespace (default all)")
 	initializerCmd.Flags().BoolVar(&ip.kubeconfig, "kubeconfig", false, "If kubeconfig should b e used for connecting to the cluster, mainly for debugging purposes, when false command autodiscover configuration from within the cluster")
 }

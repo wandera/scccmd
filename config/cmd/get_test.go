@@ -61,12 +61,12 @@ func TestExecuteGetFiles(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			application = tp.appName
-			profile = tp.profile
-			label = tp.label
-			source = ts.URL
-			fileMappings = FileMappings{mappings: make([]FileMapping, 1)}
-			fileMappings.mappings[0] = FileMapping{source: tp.srcFileName, destination: tp.destFileName}
+			gp.application = tp.appName
+			gp.profile = tp.profile
+			gp.label = tp.label
+			gp.source = ts.URL
+			gp.fileMappings = FileMappings{mappings: make([]FileMapping, 1)}
+			gp.fileMappings.mappings[0] = FileMapping{source: tp.srcFileName, destination: tp.destFileName}
 
 			if err := executeGetFiles(nil); err != nil {
 				t.Error("Execute failed with: ", err)
@@ -125,11 +125,11 @@ func TestExecuteGetValues(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			application = tp.appName
-			profile = tp.profile
-			label = tp.label
-			source = ts.URL
-			destination = tp.destFileName
+			gp.application = tp.appName
+			gp.profile = tp.profile
+			gp.label = tp.label
+			gp.source = ts.URL
+			gp.destination = tp.destFileName
 
 			if err := executeGetValues(nil); err != nil {
 				t.Error("Execute failed with: ", err)

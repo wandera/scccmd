@@ -19,6 +19,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(genDocCmd)
+	rootCmd.AddCommand(initializerCmd)
 }
 
 //Execute run root command (main entrypoint)

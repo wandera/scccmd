@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 )
 
-var (
+var gp = struct {
 	source       string
 	application  string
 	profile      string
@@ -15,7 +15,7 @@ var (
 	format       string
 	destination  string
 	fileMappings FileMappings
-)
+}{}
 
 var getCmd = &cobra.Command{
 	Use:   "get",
@@ -39,32 +39,32 @@ var getFilesCmd = &cobra.Command{
 }
 
 func executeGetValues(args []string) error {
-	ext, err := client.ParseExtension(format)
+	ext, err := client.ParseExtension(gp.format)
 
 	if err != nil {
 		return err
 	}
 
 	resp, err := client.
-		NewClient(client.Config{URI: source, Profile: profile, Application: application, Label: label}).
+		NewClient(client.Config{URI: gp.source, Profile: gp.profile, Application: gp.application, Label: gp.label}).
 		FetchAs(ext)
 
 	if err != nil {
 		return err
 	}
 
-	if destination != "" {
+	if gp.destination != "" {
 		if Verbose {
 			fmt.Println("Config server response:")
 			fmt.Println(resp)
 		}
 
-		if err = ioutil.WriteFile(destination, []byte(resp), 0644); err != nil {
+		if err = ioutil.WriteFile(gp.destination, []byte(resp), 0644); err != nil {
 			return err
 		}
 
 		if Verbose {
-			fmt.Println("Response written to: ", destination)
+			fmt.Println("Response written to: ", gp.destination)
 		}
 	} else {
 		fmt.Print(resp)
@@ -74,9 +74,9 @@ func executeGetValues(args []string) error {
 }
 
 func executeGetFiles(args []string) error {
-	for _, mapping := range fileMappings.Mappings() {
+	for _, mapping := range gp.fileMappings.Mappings() {
 		resp, err := client.
-			NewClient(client.Config{URI: source, Profile: profile, Application: application, Label: label}).
+			NewClient(client.Config{URI: gp.source, Profile: gp.profile, Application: gp.application, Label: gp.label}).
 			FetchFile(mapping.source)
 
 		if err != nil {
@@ -102,16 +102,16 @@ func executeGetFiles(args []string) error {
 func init() {
 	getCmd.AddCommand(getFilesCmd)
 	getCmd.AddCommand(getValuesCmd)
-	getCmd.PersistentFlags().StringVarP(&source, "source", "s", "", "address of the config server")
-	getCmd.PersistentFlags().StringVarP(&application, "application", "a", "", "name of the application to get the config for")
-	getCmd.PersistentFlags().StringVarP(&profile, "profile", "p", "default", "configuration profile")
-	getCmd.PersistentFlags().StringVarP(&label, "label", "l", "master", "configuration label")
+	getCmd.PersistentFlags().StringVarP(&gp.source, "source", "s", "", "address of the config server")
+	getCmd.PersistentFlags().StringVarP(&gp.application, "application", "a", "", "name of the application to get the config for")
+	getCmd.PersistentFlags().StringVarP(&gp.profile, "profile", "p", "default", "configuration profile")
+	getCmd.PersistentFlags().StringVarP(&gp.label, "label", "l", "master", "configuration label")
 	getCmd.MarkFlagRequired("source")
 	getCmd.MarkFlagRequired("application")
 
-	getFilesCmd.Flags().VarP(&fileMappings, "files", "f", "files to get in form of source:destination pairs, example '--files application.yaml:config.yaml'")
+	getFilesCmd.Flags().VarP(&gp.fileMappings, "files", "f", "files to get in form of source:destination pairs, example '--files application.yaml:config.yaml'")
 	getFilesCmd.MarkFlagRequired("files")
 
-	getValuesCmd.Flags().StringVarP(&format, "format", "f", "yaml", "output format might be one of 'json|yaml|properties'")
-	getValuesCmd.Flags().StringVarP(&destination, "destination", "d", "", "destination file name")
+	getValuesCmd.Flags().StringVarP(&gp.format, "format", "f", "yaml", "output format might be one of 'json|yaml|properties'")
+	getValuesCmd.Flags().StringVarP(&gp.destination, "destination", "d", "", "destination file name")
 }

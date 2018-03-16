@@ -3,9 +3,9 @@ package client
 import (
 	"bytes"
 	"fmt"
+	"github.com/WanderaOrg/scccmd/config/internal"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 )
 
@@ -29,10 +29,10 @@ func TestNewClient(t *testing.T) {
 		Label:       tp.label,
 	})
 
-	assertString(t, "Incorrect URI", tp.URI, c.Config().URI)
-	assertString(t, "Incorrect Application", tp.application, c.Config().Application)
-	assertString(t, "Incorrect Profile", tp.profile, c.Config().Profile)
-	assertString(t, "Incorrect Label", tp.label, c.Config().Label)
+	testutil.AssertString(t, "Incorrect URI", tp.URI, c.Config().URI)
+	testutil.AssertString(t, "Incorrect Application", tp.application, c.Config().Application)
+	testutil.AssertString(t, "Incorrect Profile", tp.profile, c.Config().Profile)
+	testutil.AssertString(t, "Incorrect Label", tp.label, c.Config().Label)
 }
 
 func TestErrorResponse(t *testing.T) {
@@ -53,7 +53,7 @@ func TestErrorResponse(t *testing.T) {
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
+		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 		w.WriteHeader(406)
 	}))
 	defer ts.Close()
@@ -88,7 +88,7 @@ func TestClient_FetchFile(t *testing.T) {
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
+		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 		fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()
@@ -104,7 +104,7 @@ func TestClient_FetchFile(t *testing.T) {
 		t.Error("FetchFile failed with: ", err)
 	}
 
-	assertString(t, "Content mismatch", tp.testContent, string(cont))
+	testutil.AssertString(t, "Content mismatch", tp.testContent, string(cont))
 }
 
 func TestClient_FetchAsYAML(t *testing.T) {
@@ -125,7 +125,7 @@ func TestClient_FetchAsYAML(t *testing.T) {
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
+		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 		fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()
@@ -141,7 +141,7 @@ func TestClient_FetchAsYAML(t *testing.T) {
 		t.Error("FetchFile failed with: ", err)
 	}
 
-	assertString(t, "Content mismatch", tp.testContent, cont)
+	testutil.AssertString(t, "Content mismatch", tp.testContent, cont)
 }
 
 func TestClient_Encrypt(t *testing.T) {
@@ -154,13 +154,13 @@ func TestClient_Encrypt(t *testing.T) {
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assertString(t, "Incorrect Method", "POST", r.Method)
-		assertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
+		testutil.AssertString(t, "Incorrect Method", "POST", r.Method)
+		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(r.Body)
 
-		assertString(t, "Incorrect Content received", tp.testContent, buf.String())
+		testutil.AssertString(t, "Incorrect Content received", tp.testContent, buf.String())
 		fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()
@@ -173,7 +173,7 @@ func TestClient_Encrypt(t *testing.T) {
 		t.Error("Encrypt failed with: ", err)
 	}
 
-	assertString(t, "Content mismatch", tp.testContent, cont)
+	testutil.AssertString(t, "Content mismatch", tp.testContent, cont)
 }
 
 func TestClient_Decrypt(t *testing.T) {
@@ -186,13 +186,13 @@ func TestClient_Decrypt(t *testing.T) {
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assertString(t, "Incorrect Method", "POST", r.Method)
-		assertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
+		testutil.AssertString(t, "Incorrect Method", "POST", r.Method)
+		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(r.Body)
 
-		assertString(t, "Incorrect Content received", tp.testContent, buf.String())
+		testutil.AssertString(t, "Incorrect Content received", tp.testContent, buf.String())
 		fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()
@@ -205,17 +205,5 @@ func TestClient_Decrypt(t *testing.T) {
 		t.Error("Decrypt failed with: ", err)
 	}
 
-	assertString(t, "Content mismatch", tp.testContent, cont)
-}
-
-func assertString(t *testing.T, message string, expected string, got string) {
-	expected = trimString(expected)
-	got = trimString(got)
-	if expected != got {
-		t.Errorf("%s: expected %s but got %s instead", message, expected, got)
-	}
-}
-
-func trimString(s string) string {
-	return strings.TrimRight(s, "\n")
+	testutil.AssertString(t, "Content mismatch", tp.testContent, cont)
 }

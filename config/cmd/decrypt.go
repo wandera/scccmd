@@ -31,14 +31,15 @@ func executeDecrypt(args []string) error {
 		}
 	}
 
-	if res, err := client.NewClient(client.Config{
+	res, err := client.NewClient(client.Config{
 		URI: dp.source,
-	}).Decrypt(dp.value); err == nil {
+	}).Decrypt(dp.value)
+
+	if err == nil {
 		fmt.Println(res)
-		return nil
-	} else {
-		return err
 	}
+
+	return err
 }
 
 func init() {

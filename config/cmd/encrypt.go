@@ -31,14 +31,15 @@ func executeEncrypt(args []string) error {
 		}
 	}
 
-	if res, err := client.NewClient(client.Config{
+	res, err := client.NewClient(client.Config{
 		URI: ep.source,
-	}).Encrypt(ep.value); err == nil {
+	}).Encrypt(ep.value)
+
+	if err == nil {
 		fmt.Println(res)
-		return nil
-	} else {
-		return err
 	}
+
+	return err
 }
 
 func init() {

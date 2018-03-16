@@ -32,7 +32,7 @@ func TestExecuteEncrypt(t *testing.T) {
 
 	ep.source = ts.URL
 	ep.value = tp.testContent
-	err := executeEncrypt(nil)
+	err := ExecuteEncrypt(nil)
 
 	if err != nil {
 		t.Error("Encrypt failed with: ", err)
@@ -55,6 +55,6 @@ func ExampleExecuteEncrypt() {
 
 	ep.source = ts.URL
 	ep.value = tp.testContent
-	executeEncrypt(nil)
+	ExecuteEncrypt(nil)
 	//Output: test
 }

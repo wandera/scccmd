@@ -17,11 +17,12 @@ var encryptCmd = &cobra.Command{
 	Use:   "encrypt",
 	Short: "Encrypt the value server-side and prints the response",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return executeEncrypt(args)
+		return ExecuteEncrypt(args)
 	},
 }
 
-func executeEncrypt(args []string) error {
+//ExecuteEncrypt runs encrypt cmd
+func ExecuteEncrypt(args []string) error {
 	if ep.value == "" {
 		bytes, err := ioutil.ReadAll(os.Stdin)
 

@@ -17,11 +17,12 @@ var decryptCmd = &cobra.Command{
 	Use:   "decrypt",
 	Short: "Decrypt the value server-side and prints the response",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return executeDecrypt(args)
+		return ExecuteDecrypt(args)
 	},
 }
 
-func executeDecrypt(args []string) error {
+//ExecuteDecrypt runs decrypt cmd
+func ExecuteDecrypt(args []string) error {
 	if dp.value == "" {
 		bytes, err := ioutil.ReadAll(os.Stdin)
 

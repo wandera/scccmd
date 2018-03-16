@@ -11,7 +11,7 @@ import (
 )
 
 func TestNoArgExecute(t *testing.T) {
-	err := executeGetFiles(nil)
+	err := ExecuteGetFiles(nil)
 	if err != nil {
 		t.Error("Execute failed with: ", err)
 	}
@@ -68,7 +68,7 @@ func TestExecuteGetFiles(t *testing.T) {
 			gp.fileMappings = FileMappings{mappings: make([]FileMapping, 1)}
 			gp.fileMappings.mappings[0] = FileMapping{source: tp.srcFileName, destination: tp.destFileName}
 
-			if err := executeGetFiles(nil); err != nil {
+			if err := ExecuteGetFiles(nil); err != nil {
 				t.Error("Execute failed with: ", err)
 			}
 
@@ -131,7 +131,7 @@ func TestExecuteGetValues(t *testing.T) {
 			gp.source = ts.URL
 			gp.destination = tp.destFileName
 
-			if err := executeGetValues(nil); err != nil {
+			if err := ExecuteGetValues(nil); err != nil {
 				t.Error("Execute failed with: ", err)
 			}
 

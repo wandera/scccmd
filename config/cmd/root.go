@@ -20,6 +20,8 @@ func init() {
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(genDocCmd)
 	rootCmd.AddCommand(initializerCmd)
+	rootCmd.AddCommand(encryptCmd)
+	rootCmd.AddCommand(decryptCmd)
 }
 
 //Execute run root command (main entrypoint)

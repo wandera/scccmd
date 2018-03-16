@@ -26,8 +26,10 @@ func ParseExtension(str string) (Extension, error) {
 }
 
 const (
-	configPathFmt     = "%s/%s/%s-%s.%s"
-	configFilePathFmt = "%s/%s/%s/%s/%s"
+	configPathFmt     = "/%s/%s-%s.%s"
+	configFilePathFmt = "/%s/%s/%s/%s"
+	encryptPath       = "/encrypt"
+	decryptPath       = "/decrypt"
 )
 
 const (
@@ -56,6 +58,12 @@ type Client interface {
 
 	//FetchAsProperties queries the remote configuration service and returns the result as a Properties string
 	FetchAsProperties() (string, error)
+
+	//Encrypt encrypts the value server side and returns result
+	Encrypt(value string) (string, error)
+
+	//Decrypt decrypts the value server side and returns result
+	Decrypt(value string) (string, error)
 }
 
 //Config needed to fetch a remote configuration
@@ -75,6 +83,15 @@ func NewClient(c Config) Client {
 	client := &client{
 		config: &c,
 	}
+
+	resty.SetHostURL(c.URI)
+	resty.OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
+		if response.StatusCode() >= 300 || response.StatusCode() < 200 {
+			return fmt.Errorf("unexpected response code '%s'", response.Status())
+		}
+		return nil
+	})
+
 	return client
 }
 
@@ -107,14 +124,32 @@ func (c *client) FetchAsYAML() (string, error) {
 
 //FetchAs queries the remote configuration service and returns the result in specified format
 func (c *client) FetchAs(extension Extension) (string, error) {
-	resp, err := resty.R().Get(c.formatURI(extension))
+	resp, err := resty.R().Get(c.formatValuesURI(extension))
 	return resp.String(), err
 }
 
-func (c *client) formatURI(extension Extension) string {
-	return fmt.Sprintf(configPathFmt, c.config.URI, c.config.Label, c.config.Application, c.config.Profile, extension)
+//Encrypt encrypts the value server side and returns result
+func (c *client) Encrypt(value string) (string, error) {
+	resp, err := resty.R().
+		SetHeader("Content-Type", "text/plain").
+		SetBody(value).
+		Post(encryptPath)
+	return resp.String(), err
+}
+
+//Decrypt decrypts the value server side and returns result
+func (c *client) Decrypt(value string) (string, error) {
+	resp, err := resty.R().
+		SetHeader("Content-Type", "text/plain").
+		SetBody(value).
+		Post(decryptPath)
+	return resp.String(), err
+}
+
+func (c *client) formatValuesURI(extension Extension) string {
+	return fmt.Sprintf(configPathFmt, c.config.Label, c.config.Application, c.config.Profile, extension)
 }
 
 func (c *client) formatFileURI(source string) string {
-	return fmt.Sprintf(configFilePathFmt, c.config.URI, c.config.Application, c.config.Profile, c.config.Label, source)
+	return fmt.Sprintf(configFilePathFmt, c.config.Application, c.config.Profile, c.config.Label, source)
 }

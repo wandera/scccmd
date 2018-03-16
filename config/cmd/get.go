@@ -26,7 +26,7 @@ var getValuesCmd = &cobra.Command{
 	Use:   "values",
 	Short: "Get the config values in specified format from the given config server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return executeGetValues(args)
+		return ExecuteGetValues(args)
 	},
 }
 
@@ -34,11 +34,12 @@ var getFilesCmd = &cobra.Command{
 	Use:   "files",
 	Short: "Get the config files from the given config server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return executeGetFiles(args)
+		return ExecuteGetFiles(args)
 	},
 }
 
-func executeGetValues(args []string) error {
+//ExecuteGetValues runs get values cmd
+func ExecuteGetValues(args []string) error {
 	ext, err := client.ParseExtension(gp.format)
 
 	if err != nil {
@@ -73,7 +74,8 @@ func executeGetValues(args []string) error {
 	return nil
 }
 
-func executeGetFiles(args []string) error {
+//ExecuteGetFiles runs get files cmd
+func ExecuteGetFiles(args []string) error {
 	for _, mapping := range gp.fileMappings.Mappings() {
 		resp, err := client.
 			NewClient(client.Config{URI: gp.source, Profile: gp.profile, Application: gp.application, Label: gp.label}).

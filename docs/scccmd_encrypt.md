@@ -1,4 +1,4 @@
-## config encrypt
+## scccmd encrypt
 
 Encrypt the value server-side and prints the response
 
@@ -8,7 +8,7 @@ Encrypt the value server-side and prints the response
 Encrypt the value server-side and prints the response
 
 ```
-config encrypt [flags]
+scccmd encrypt [flags]
 ```
 
 ### Options
@@ -26,5 +26,5 @@ config encrypt [flags]
 ```
 
 ### SEE ALSO
-* [config](config.md)	 - Spring Cloud Config management tool
+* [scccmd](scccmd.md)	 - Spring Cloud Config management tool
 

@@ -1,4 +1,4 @@
-## config gendoc
+## scccmd gendoc
 
 Generates documentation for this tool in Markdown format
 
@@ -8,7 +8,7 @@ Generates documentation for this tool in Markdown format
 Generates documentation for this tool in Markdown format
 
 ```
-config gendoc [flags]
+scccmd gendoc [flags]
 ```
 
 ### Options
@@ -25,5 +25,5 @@ config gendoc [flags]
 ```
 
 ### SEE ALSO
-* [config](config.md)	 - Spring Cloud Config management tool
+* [scccmd](scccmd.md)	 - Spring Cloud Config management tool
 

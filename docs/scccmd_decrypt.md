@@ -1,4 +1,4 @@
-## config decrypt
+## scccmd decrypt
 
 Decrypt the value server-side and prints the response
 
@@ -8,7 +8,7 @@ Decrypt the value server-side and prints the response
 Decrypt the value server-side and prints the response
 
 ```
-config decrypt [flags]
+scccmd decrypt [flags]
 ```
 
 ### Options
@@ -26,5 +26,5 @@ config decrypt [flags]
 ```
 
 ### SEE ALSO
-* [config](config.md)	 - Spring Cloud Config management tool
+* [scccmd](scccmd.md)	 - Spring Cloud Config management tool
 

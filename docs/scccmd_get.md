@@ -1,4 +1,4 @@
-## config get
+## scccmd get
 
 Get the config from the given config server
 
@@ -24,7 +24,7 @@ Get the config from the given config server
 ```
 
 ### SEE ALSO
-* [config](config.md)	 - Spring Cloud Config management tool
-* [config get files](config_get_files.md)	 - Get the config files from the given config server
-* [config get values](config_get_values.md)	 - Get the config values in specified format from the given config server
+* [scccmd](scccmd.md)	 - Spring Cloud Config management tool
+* [scccmd get files](scccmd_get_files.md)	 - Get the config files from the given config server
+* [scccmd get values](scccmd_get_values.md)	 - Get the config values in specified format from the given config server
 

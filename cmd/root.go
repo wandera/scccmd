@@ -8,7 +8,7 @@ import (
 var Verbose bool
 
 var rootCmd = &cobra.Command{
-	Use:               "config",
+	Use:               "scccmd",
 	DisableAutoGenTag: true,
 	Short:             "Spring Cloud Config management tool",
 	Long: `Commandline tool used for managing configuration from Spring Cloud Config Server.

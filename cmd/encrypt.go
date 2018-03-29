@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/WanderaOrg/scccmd/config/client"
+	"github.com/WanderaOrg/scccmd/pkg/client"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 	"os"

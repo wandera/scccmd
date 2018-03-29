@@ -3,7 +3,7 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"github.com/WanderaOrg/scccmd/config/internal"
+	"github.com/WanderaOrg/scccmd/internal"
 	"net/http"
 	"net/http/httptest"
 	"testing"

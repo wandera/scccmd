@@ -1,4 +1,4 @@
-## config initializer
+## scccmd initializer
 
 Runs K8s initializer for injecting config from Cloud Config Server
 
@@ -8,7 +8,7 @@ Runs K8s initializer for injecting config from Cloud Config Server
 Runs K8s initializer for injecting config from Cloud Config Server
 
 ```
-config initializer [flags]
+scccmd initializer [flags]
 ```
 
 ### Options
@@ -28,5 +28,5 @@ config initializer [flags]
 ```
 
 ### SEE ALSO
-* [config](config.md)	 - Spring Cloud Config management tool
+* [scccmd](scccmd.md)	 - Spring Cloud Config management tool
 

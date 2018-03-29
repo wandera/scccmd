@@ -1,4 +1,4 @@
-## config get files
+## scccmd get files
 
 Get the config files from the given config server
 
@@ -8,7 +8,7 @@ Get the config files from the given config server
 Get the config files from the given config server
 
 ```
-config get files [flags]
+scccmd get files [flags]
 ```
 
 ### Options
@@ -29,5 +29,5 @@ config get files [flags]
 ```
 
 ### SEE ALSO
-* [config get](config_get.md)	 - Get the config from the given config server
+* [scccmd get](scccmd_get.md)	 - Get the config from the given config server
 

@@ -4,7 +4,6 @@ Decrypt the value server-side and prints the response
 
 ### Synopsis
 
-
 Decrypt the value server-side and prints the response
 
 ```
@@ -26,5 +25,6 @@ scccmd decrypt [flags]
 ```
 
 ### SEE ALSO
+
 * [scccmd](scccmd.md)	 - Spring Cloud Config management tool
 

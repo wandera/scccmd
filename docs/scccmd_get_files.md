@@ -4,7 +4,6 @@ Get the config files from the given config server
 
 ### Synopsis
 
-
 Get the config files from the given config server
 
 ```
@@ -29,5 +28,6 @@ scccmd get files [flags]
 ```
 
 ### SEE ALSO
+
 * [scccmd get](scccmd_get.md)	 - Get the config from the given config server
 

@@ -220,7 +220,7 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	// verify the content type is accurate
 	contentType := r.Header.Get("Content-Type")
 	if contentType != "application/json" {
-		log.Println("contentType=%s, expect application/json", contentType)
+		log.Printf("contentType=%s, expect application/json \n", contentType)
 		http.Error(w, "invalid Content-Type, want `application/json`", http.StatusUnsupportedMediaType)
 		return
 	}

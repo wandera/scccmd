@@ -87,7 +87,7 @@ type WebhookParameters struct {
 func (w *WebhookConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	type rawWebhookConfig WebhookConfig
 	raw := rawWebhookConfig{
-		Policy:           InjectionPolicyDisabled,
+		Policy:           InjectionPolicyEnabled,
 		ContainerImage:   "wanderadock/scccmd",
 		AnnotationPrefix: "config.scccmd.github.com/",
 		Default: WebhookConfigDefaults{
@@ -231,11 +231,6 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Could not decode body: %v", err)
 		reviewResponse = toAdmissionResponse(err)
 	} else {
-		if ar.Kind == "" {
-			log.Printf("malformed request body %s \n", ar)
-			http.Error(w, "malformed request body", http.StatusBadRequest)
-			return
-		}
 		reviewResponse = wh.inject(&ar)
 	}
 

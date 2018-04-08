@@ -19,16 +19,16 @@ type InjectionPolicy string
 // volumes.
 type SidecarInjectionStatus struct {
 	InitContainers []string `json:"initContainers"`
-	Containers     []string `json:"containers"`
+	VolumeMounts   []string `json:"volumeMounts"`
 	Volumes        []string `json:"volumes"`
 }
 
 // SidecarInjectionSpec collects all container types and volumes for
 // sidecar mesh injection
 type SidecarInjectionSpec struct {
-	InitContainers []v1.Container `yaml:"initContainers"`
-	Containers     []v1.Container `yaml:"containers"`
-	Volumes        []v1.Volume    `yaml:"volumes"`
+	InitContainers []v1.Container   `yaml:"initContainers"`
+	VolumeMounts   []v1.VolumeMount `yaml:"volumeMounts"`
+	Volumes        []v1.Volume      `yaml:"volumes"`
 }
 
 type dynamicConfig struct {
@@ -69,18 +69,15 @@ func injectionStatus(pod *corev1.Pod, annotationStatusKey string) *SidecarInject
 		// heuristic assumes status is valid if any of the resource
 		// lists is non-empty.
 		if len(status.InitContainers) != 0 ||
-			len(status.Containers) != 0 ||
+			len(status.VolumeMounts) != 0 ||
 			len(status.Volumes) != 0 {
 			return &status
 		}
 	}
-	return &SidecarInjectionStatus{
-		Containers: []string{pod.Spec.Containers[0].Name},
-	}
+	return &SidecarInjectionStatus{}
 }
 
 func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *WebhookConfig) (*SidecarInjectionSpec, string, error) { // nolint: lll
-	patchedContainer := spec.DeepCopy().Containers[0]
 
 	d, err := calculateDynamicConfig(config, metadata.GetAnnotations(), spec)
 
@@ -88,8 +85,6 @@ func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *Webhoo
 		Name:      d.volumeName,
 		MountPath: d.volumeMount,
 	}
-
-	patchedContainer.VolumeMounts = append(patchedContainer.VolumeMounts, volumeMount)
 
 	sic := SidecarInjectionSpec{
 		InitContainers: []corev1.Container{
@@ -100,7 +95,7 @@ func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *Webhoo
 				VolumeMounts: []corev1.VolumeMount{volumeMount},
 			},
 		},
-		Containers: []corev1.Container{patchedContainer},
+		VolumeMounts: []corev1.VolumeMount{volumeMount},
 		Volumes: []corev1.Volume{
 			{
 				Name:         volumeMount.Name,
@@ -113,8 +108,8 @@ func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *Webhoo
 	for _, c := range sic.InitContainers {
 		status.InitContainers = append(status.InitContainers, c.Name)
 	}
-	for _, c := range sic.Containers {
-		status.Containers = append(status.Containers, c.Name)
+	for _, c := range sic.VolumeMounts {
+		status.VolumeMounts = append(status.VolumeMounts, c.Name)
 	}
 	for _, c := range sic.Volumes {
 		status.Volumes = append(status.Volumes, c.Name)

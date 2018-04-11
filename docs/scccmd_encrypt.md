@@ -4,7 +4,6 @@ Encrypt the value server-side and prints the response
 
 ### Synopsis
 
-
 Encrypt the value server-side and prints the response
 
 ```
@@ -26,5 +25,6 @@ scccmd encrypt [flags]
 ```
 
 ### SEE ALSO
+
 * [scccmd](scccmd.md)	 - Spring Cloud Config management tool
 

@@ -19,9 +19,9 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(genDocCmd)
-	rootCmd.AddCommand(initializerCmd)
 	rootCmd.AddCommand(encryptCmd)
 	rootCmd.AddCommand(decryptCmd)
+	rootCmd.AddCommand(webhookCmd)
 }
 
 //Execute run root command (main entrypoint)

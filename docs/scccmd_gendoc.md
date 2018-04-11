@@ -4,7 +4,6 @@ Generates documentation for this tool in Markdown format
 
 ### Synopsis
 
-
 Generates documentation for this tool in Markdown format
 
 ```
@@ -25,5 +24,6 @@ scccmd gendoc [flags]
 ```
 
 ### SEE ALSO
+
 * [scccmd](scccmd.md)	 - Spring Cloud Config management tool
 

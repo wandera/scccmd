@@ -4,7 +4,6 @@ Get the config values in specified format from the given config server
 
 ### Synopsis
 
-
 Get the config values in specified format from the given config server
 
 ```
@@ -30,5 +29,6 @@ scccmd get values [flags]
 ```
 
 ### SEE ALSO
+
 * [scccmd get](scccmd_get.md)	 - Get the config from the given config server
 

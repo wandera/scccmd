@@ -4,7 +4,6 @@ Get the config from the given config server
 
 ### Synopsis
 
-
 Get the config from the given config server
 
 ### Options
@@ -24,6 +23,7 @@ Get the config from the given config server
 ```
 
 ### SEE ALSO
+
 * [scccmd](scccmd.md)	 - Spring Cloud Config management tool
 * [scccmd get files](scccmd_get_files.md)	 - Get the config files from the given config server
 * [scccmd get values](scccmd_get_values.md)	 - Get the config values in specified format from the given config server

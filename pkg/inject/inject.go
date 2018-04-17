@@ -81,6 +81,10 @@ func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *Webhoo
 
 	d, err := calculateDynamicConfig(config, metadata.GetAnnotations(), spec)
 
+	if err != nil {
+		return nil, "", err
+	}
+
 	volumeMount := corev1.VolumeMount{
 		Name:      d.volumeName,
 		MountPath: d.volumeMount,

@@ -18,10 +18,10 @@ Tool for obtaining configuration from config server
 The tool is released as docker image as well, check the [repository](https://hub.docker.com/r/wanderadock/scccmd/).
 
 ### Kubernetes Initializer
-The tool could be used as Initializer for Kubernetes deployments. 
-Deployed initializer will add init container to applicable deployments,
+The tool could be used as Webhook for Kubernetes deployments. 
+Deployed webhook will add init container to applicable deployments,
 which in turn downloads configuration in deployment initialization phase.
-Example k8s [manifest](docs/k8s/initializer.yaml).
+Example k8s [manifest](docs/k8s/bundle.yaml).
 
 ### Tool documentation
 [docs](docs/config.md)	 - Generated documentation for the tool

@@ -323,11 +323,7 @@ func TestRunAndServe(t *testing.T) {
 		{
 			"op":"add",
 			"path":"/metadata/annotations/config.scccmd.github.com~1status",
-			"value":"{
-				\"initContainers\":[\"config-init\"],
-				\"volumeMounts\":[\"config-volume\"],
-				\"volumes\":[\"config-volume\"]
-			}"
+			"value":"{\"initContainers\":[\"config-init\"],\"volumeMounts\":[\"config-volume\"],\"volumes\":[\"config-volume\"]}"
 		}
 	]`)
 

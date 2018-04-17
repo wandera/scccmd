@@ -73,6 +73,7 @@ ZOQ5UvU=
 -----END CERTIFICATE-----`)
 )
 
+const annotationPrefix = "config.scccmd.github.com/"
 const annotationInjectKey = "config.scccmd.github.com/inject"
 
 func TestInjectRequired(t *testing.T) {
@@ -189,8 +190,10 @@ func makeTestData(t testing.TB, skip bool) []byte {
 
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:        "test",
-			Annotations: map[string]string{},
+			Name: "test",
+			Annotations: map[string]string{
+				annotationPrefix + "destination": "config.yaml",
+			},
 		},
 		Spec: corev1.PodSpec{
 			Volumes:        []corev1.Volume{{Name: "v0"}},
@@ -294,6 +297,7 @@ func TestRunAndServe(t *testing.T) {
 			"value":{
 				"name":"config-init",
 				"image":"wanderadock/scccmd",
+				"args":["get","values","--source","http://config-service.default.svc:8080","--application","c1","--profile","default","--label","master","--destination","config.yaml"],
 				"resources":{},
 				"volumeMounts":[{"name":"config-volume","mountPath":"/config"}]
 			}
@@ -318,10 +322,8 @@ func TestRunAndServe(t *testing.T) {
 		},
 		{
 			"op":"add",
-			"path":"/metadata/annotations",
-			"value":{
-				"config.scccmd.github.com/status":"{\"initContainers\":[\"config-init\"],\"volumeMounts\":[\"config-volume\"],\"volumes\":[\"config-volume\"]}"
-			}
+			"path":"/metadata/annotations/config.scccmd.github.com~1status",
+			"value":"{\"initContainers\":[\"config-init\"],\"volumeMounts\":[\"config-volume\"],\"volumes\":[\"config-volume\"]}"
 		}
 	]`)
 

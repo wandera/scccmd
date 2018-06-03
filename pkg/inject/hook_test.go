@@ -8,6 +8,7 @@ import (
 	"github.com/WanderaOrg/scccmd/internal"
 	"github.com/WanderaOrg/scccmd/internal/testcerts"
 	"io/ioutil"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -238,8 +239,17 @@ func createWebhook(t testing.TB) (*Webhook, func()) {
 	}
 
 	config := &WebhookConfig{
-		Policy:  InjectionPolicyEnabled,
-		Default: WebhookConfigDefaults{},
+		Policy: InjectionPolicyEnabled,
+		Resources: InitContainerResources{
+			Requests: InitContainerResourcesList{
+				CPU:    resource.NewScaledQuantity(100, resource.Milli).String(),
+				Memory: resource.NewScaledQuantity(10, resource.Mega).String(),
+			},
+			Limits: InitContainerResourcesList{
+				CPU:    resource.NewScaledQuantity(100, resource.Milli).String(),
+				Memory: resource.NewScaledQuantity(50, resource.Mega).String(),
+			},
+		},
 	}
 
 	configBytes, err := yaml.Marshal(config)

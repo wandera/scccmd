@@ -100,12 +100,12 @@ func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *Webhoo
 				VolumeMounts: []corev1.VolumeMount{volumeMount},
 				Resources: corev1.ResourceRequirements{
 					Requests: corev1.ResourceList{
-						"cpu":    *resource.NewScaledQuantity(100, resource.Milli),
-						"memory": *resource.NewScaledQuantity(10, resource.Mega),
+						"cpu":    resource.MustParse(config.Resources.Requests.CPU),
+						"memory": resource.MustParse(config.Resources.Requests.Memory),
 					},
 					Limits: corev1.ResourceList{
-						"cpu":    *resource.NewScaledQuantity(100, resource.Milli),
-						"memory": *resource.NewScaledQuantity(50, resource.Mega),
+						"cpu":    resource.MustParse(config.Resources.Limits.CPU),
+						"memory": resource.MustParse(config.Resources.Limits.Memory),
 					},
 				},
 			},

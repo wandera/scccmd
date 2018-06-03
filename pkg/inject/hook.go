@@ -37,33 +37,33 @@ const (
 
 // WebhookConfigDefaults configures default init container values.
 type WebhookConfigDefaults struct {
-	ContainerName string `yaml:"container-name"`
-	Label         string `yaml:"label"`
-	Profile       string `yaml:"profile"`
-	VolumeName    string `yaml:"volume-name"`
-	VolumeMount   string `yaml:"volume-mount"`
-	Source        string `yaml:"source"`
+	ContainerName string `json:"container-name"`
+	Label         string `json:"label"`
+	Profile       string `json:"profile"`
+	VolumeName    string `json:"volume-name"`
+	VolumeMount   string `json:"volume-mount"`
+	Source        string `json:"source"`
 }
 
 // InitContainerResourcesList resources for init container
 type InitContainerResourcesList struct {
-	CPU    string `yaml:"cpu"`
-	Memory string `yaml:"memory"`
+	CPU    string `json:"cpu"`
+	Memory string `json:"memory"`
 }
 
 // InitContainerResources resources for init container
 type InitContainerResources struct {
-	Requests InitContainerResourcesList `yaml:"requests"`
-	Limits   InitContainerResourcesList `yaml:"limits"`
+	Requests InitContainerResourcesList `json:"requests"`
+	Limits   InitContainerResourcesList `json:"limits"`
 }
 
 // WebhookConfig struct representing webhook configuration values.
 type WebhookConfig struct {
-	AnnotationPrefix string                 `yaml:"annotation-prefix"`
-	Policy           InjectionPolicy        `yaml:"policy"`
-	ContainerImage   string                 `yaml:"container-image"`
-	Default          WebhookConfigDefaults  `yaml:"default"`
-	Resources        InitContainerResources `yaml:"resources"`
+	AnnotationPrefix string                 `json:"annotation-prefix"`
+	Policy           InjectionPolicy        `json:"policy"`
+	ContainerImage   string                 `json:"container-image"`
+	Default          WebhookConfigDefaults  `json:"default"`
+	Resources        InitContainerResources `json:"resources"`
 }
 
 // Webhook implements a mutating webhook for automatic config injection.

@@ -240,13 +240,21 @@ func createWebhook(t testing.TB) (*Webhook, func()) {
 
 	config := &WebhookConfig{
 		Policy: InjectionPolicyEnabled,
+		Default: WebhookConfigDefaults{
+			ContainerName: "config-init",
+			VolumeMount:   "/config",
+			VolumeName:    "config-volume",
+			Label:         "master",
+			Profile:       "default",
+			Source:        "http://config-service.default.svc:8080",
+		},
 		Resources: InitContainerResources{
 			Requests: InitContainerResourcesList{
-				CPU:    resource.NewScaledQuantity(100, resource.Milli).String(),
+				CPU:    resource.NewScaledQuantity(10, resource.Milli).String(),
 				Memory: resource.NewScaledQuantity(10, resource.Mega).String(),
 			},
 			Limits: InitContainerResourcesList{
-				CPU:    resource.NewScaledQuantity(100, resource.Milli).String(),
+				CPU:    resource.NewScaledQuantity(50, resource.Milli).String(),
 				Memory: resource.NewScaledQuantity(50, resource.Mega).String(),
 			},
 		},
@@ -309,7 +317,7 @@ func TestRunAndServe(t *testing.T) {
 				"name":"config-init",
 				"image":"wanderadock/scccmd",
 				"args":["get","values","--source","http://config-service.default.svc:8080","--application","c1","--profile","default","--label","master","--destination","config.yaml"],
-				"resources":{"limits":{"cpu":"100m","memory":"50M"},"requests":{"cpu":"100m","memory":"10M"}},
+				"resources":{"limits":{"cpu":"50m","memory":"50M"},"requests":{"cpu":"10m","memory":"10M"}},
 				"volumeMounts":[{"name":"config-volume","mountPath":"/config"}]
 			}
 		},

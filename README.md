@@ -10,7 +10,7 @@ Tool for obtaining configuration from config server
 
 ### How to develop
 * Checkout into your GOROOT directory (e.g. /go/src/github.com/WanderaOrg/scccmd)
-* `cd` into the folder and run `dep ensure`
+* `cd` into the folder and run `dep ensure --vendor-only`
 * Tests are started by `go test -v ./...`
 * Or if you dont want to setup your local go env just use the provided Dockerfile
 
@@ -24,4 +24,4 @@ which in turn downloads configuration in deployment initialization phase.
 Example k8s [manifest](docs/k8s/bundle.yaml).
 
 ### Tool documentation
-[docs](docs/config.md)	 - Generated documentation for the tool
+[docs](docs/scccmd.md)	 - Generated documentation for the tool

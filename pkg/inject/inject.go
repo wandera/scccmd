@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"k8s.io/api/core/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"
 	"strings"
@@ -97,6 +98,16 @@ func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *Webhoo
 				Image:        config.ContainerImage,
 				Args:         d.imageArgs,
 				VolumeMounts: []corev1.VolumeMount{volumeMount},
+				Resources: corev1.ResourceRequirements{
+					Requests: corev1.ResourceList{
+						"cpu":    resource.MustParse(config.Resources.Requests.CPU),
+						"memory": resource.MustParse(config.Resources.Requests.Memory),
+					},
+					Limits: corev1.ResourceList{
+						"cpu":    resource.MustParse(config.Resources.Limits.CPU),
+						"memory": resource.MustParse(config.Resources.Limits.Memory),
+					},
+				},
 			},
 		},
 		VolumeMounts: []corev1.VolumeMount{volumeMount},

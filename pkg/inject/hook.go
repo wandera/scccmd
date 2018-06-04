@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
@@ -36,20 +37,33 @@ const (
 
 // WebhookConfigDefaults configures default init container values.
 type WebhookConfigDefaults struct {
-	ContainerName string `yaml:"container-name"`
-	Label         string `yaml:"label"`
-	Profile       string `yaml:"profile"`
-	VolumeName    string `yaml:"volume-name"`
-	VolumeMount   string `yaml:"volume-mount"`
-	Source        string `yaml:"source"`
+	ContainerName string `json:"container-name"`
+	Label         string `json:"label"`
+	Profile       string `json:"profile"`
+	VolumeName    string `json:"volume-name"`
+	VolumeMount   string `json:"volume-mount"`
+	Source        string `json:"source"`
+}
+
+// InitContainerResourcesList resources for init container
+type InitContainerResourcesList struct {
+	CPU    string `json:"cpu"`
+	Memory string `json:"memory"`
+}
+
+// InitContainerResources resources for init container
+type InitContainerResources struct {
+	Requests InitContainerResourcesList `json:"requests"`
+	Limits   InitContainerResourcesList `json:"limits"`
 }
 
 // WebhookConfig struct representing webhook configuration values.
 type WebhookConfig struct {
-	AnnotationPrefix string                `yaml:"annotation-prefix"`
-	Policy           InjectionPolicy       `yaml:"policy"`
-	ContainerImage   string                `yaml:"container-image"`
-	Default          WebhookConfigDefaults `yaml:"default"`
+	AnnotationPrefix string                 `json:"annotation-prefix"`
+	Policy           InjectionPolicy        `json:"policy"`
+	ContainerImage   string                 `json:"container-image"`
+	Default          WebhookConfigDefaults  `json:"default"`
+	Resources        InitContainerResources `json:"resources"`
 }
 
 // Webhook implements a mutating webhook for automatic config injection.
@@ -97,6 +111,16 @@ func (w *WebhookConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
 			Label:         "master",
 			Profile:       "default",
 			Source:        "http://config-service.default.svc:8080",
+		},
+		Resources: InitContainerResources{
+			Requests: InitContainerResourcesList{
+				CPU:    resource.NewScaledQuantity(100, resource.Milli).String(),
+				Memory: resource.NewScaledQuantity(10, resource.Mega).String(),
+			},
+			Limits: InitContainerResourcesList{
+				CPU:    resource.NewScaledQuantity(100, resource.Milli).String(),
+				Memory: resource.NewScaledQuantity(50, resource.Mega).String(),
+			},
 		},
 	}
 	if err := unmarshal(&raw); err != nil {

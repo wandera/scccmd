@@ -20,7 +20,7 @@ scccmd gendoc [flags]
 ### Options inherited from parent commands
 
 ```
-  -v, --verbose   verbose output
+      --log-level string   command log level (options: [panic fatal error warning info debug]) (default "info")
 ```
 
 ### SEE ALSO

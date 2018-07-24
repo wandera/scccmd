@@ -424,13 +424,13 @@ func TestRunAndServe(t *testing.T) {
 			var gotPatch bytes.Buffer
 			if len(gotReview.Response.Patch) > 0 {
 				if err := json.Compact(&gotPatch, gotReview.Response.Patch); err != nil {
-					t.Fatalf(err.Error())
+					t.Fatal(err.Error())
 				}
 			}
 			var wantPatch bytes.Buffer
 			if len(c.wantPatch) > 0 {
 				if err := json.Compact(&wantPatch, c.wantPatch); err != nil {
-					t.Fatalf(err.Error())
+					t.Fatal(err.Error())
 				}
 			}
 			testutil.AssertString(t, "got bad patch", string(wantPatch.Bytes()), string(gotPatch.Bytes()))

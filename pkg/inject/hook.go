@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/dimiro1/health"
 	"github.com/howeyc/fsnotify"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"k8s.io/api/admission/v1beta1"
@@ -15,7 +16,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
-	"log"
 	"net/http"
 	"path/filepath"
 	"sync"
@@ -182,7 +182,7 @@ func NewWebhook(p WebhookParameters) (*Webhook, error) {
 func (wh *Webhook) Run(stop <-chan struct{}) {
 	go func() {
 		if err := wh.server.ListenAndServeTLS("", ""); err != nil {
-			log.Printf("ListenAndServeTLS for admission webhook returned error: %v", err)
+			log.Errorf("ListenAndServeTLS for admission webhook returned error: %v", err)
 		}
 	}()
 	defer wh.watcher.Close() // nolint: errcheck
@@ -201,13 +201,13 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 		case <-timerC:
 			config, err := loadConfig(wh.configFile)
 			if err != nil {
-				log.Printf("update error: %v", err)
+				log.Errorf("update error: %v", err)
 				break
 			}
 
 			pair, err := tls.LoadX509KeyPair(wh.certFile, wh.keyFile)
 			if err != nil {
-				log.Printf("reload cert error: %v", err)
+				log.Errorf("reload cert error: %v", err)
 				break
 			}
 			wh.mu.Lock()
@@ -220,11 +220,11 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 				timerC = time.After(watchDebounceDelay)
 			}
 		case err := <-wh.watcher.Error:
-			log.Printf("Watcher error: %v", err)
+			log.Errorf("Watcher error: %v", err)
 		case <-healthC:
 			content := []byte(`ok`)
 			if err := ioutil.WriteFile(wh.healthCheckFile, content, 0644); err != nil {
-				log.Printf("Health check update of %q failed: %v", wh.healthCheckFile, err)
+				log.Errorf("Health check update of %q failed: %v", wh.healthCheckFile, err)
 			}
 		case <-stop:
 			return
@@ -240,7 +240,7 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if len(body) == 0 {
-		log.Println("no body found")
+		log.Errorf("no body found")
 		http.Error(w, "no body found", http.StatusBadRequest)
 		return
 	}
@@ -248,7 +248,7 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	// verify the content type is accurate
 	contentType := r.Header.Get("Content-Type")
 	if contentType != "application/json" {
-		log.Printf("contentType=%s, expect application/json \n", contentType)
+		log.Errorf("contentType=%s, expect application/json \n", contentType)
 		http.Error(w, "invalid Content-Type, want `application/json`", http.StatusUnsupportedMediaType)
 		return
 	}
@@ -256,7 +256,7 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	var reviewResponse *v1beta1.AdmissionResponse
 	ar := v1beta1.AdmissionReview{}
 	if _, _, err := deserializer.Decode(body, nil, &ar); err != nil {
-		log.Printf("Could not decode body: %v", err)
+		log.Errorf("Could not decode body: %v", err)
 		reviewResponse = toAdmissionResponse(err)
 	} else {
 		reviewResponse = wh.inject(&ar)
@@ -272,11 +272,11 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := json.Marshal(response)
 	if err != nil {
-		log.Printf("Could not encode response: %v", err)
+		log.Errorf("Could not encode response: %v", err)
 		http.Error(w, fmt.Sprintf("could encode response: %v", err), http.StatusInternalServerError)
 	}
 	if _, err := w.Write(resp); err != nil {
-		log.Printf("Could not write response: %v", err)
+		log.Errorf("Could not write response: %v", err)
 		http.Error(w, fmt.Sprintf("could not write response: %v", err), http.StatusInternalServerError)
 	}
 }
@@ -310,17 +310,17 @@ func (wh *Webhook) inject(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionRespons
 	req := ar.Request
 	var pod corev1.Pod
 	if err := json.Unmarshal(req.Object.Raw, &pod); err != nil {
-		log.Printf("Could not unmarshal raw object: %v", err)
+		log.Errorf("Could not unmarshal raw object: %v", err)
 		return toAdmissionResponse(err)
 	}
 
-	log.Printf("AdmissionReview for Kind=%v Namespace=%v Name=%v (%v) UID=%v Rfc6902PatchOperation=%v UserInfo=%v",
+	log.Infof("AdmissionReview for Kind=%v Namespace=%v Name=%v (%v) UID=%v Rfc6902PatchOperation=%v UserInfo=%v",
 		req.Kind, req.Namespace, req.Name, pod.Name, req.UID, req.Operation, req.UserInfo)
-	log.Printf("Object: %v", string(req.Object.Raw))
-	log.Printf("OldObject: %v", string(req.OldObject.Raw))
+	log.Debugf("Object: %v", string(req.Object.Raw))
+	log.Debugf("OldObject: %v", string(req.OldObject.Raw))
 
 	if !injectRequired(ignoredNamespaces, wh.config.Policy, &pod.ObjectMeta, injectKey, statusKey) {
-		log.Printf("Skipping %s/%s due to policy check", pod.Namespace, pod.Name)
+		log.Infof("Skipping %s/%s due to policy check", pod.Namespace, pod.Name)
 		return &v1beta1.AdmissionResponse{
 			Allowed: true,
 		}
@@ -338,7 +338,7 @@ func (wh *Webhook) inject(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionRespons
 		return toAdmissionResponse(err)
 	}
 
-	log.Printf("AdmissionResponse: patch=%v\n", string(patchBytes))
+	log.Debugf("AdmissionResponse: patch=%v\n", string(patchBytes))
 
 	reviewResponse := v1beta1.AdmissionResponse{
 		Allowed: true,
@@ -367,7 +367,7 @@ func loadConfig(injectFile string) (*WebhookConfig, error) {
 		return nil, err
 	}
 
-	log.Printf("New configuration: sha256sum %x", sha256.Sum256(data))
+	log.Infof("New configuration: sha256sum %x", sha256.Sum256(data))
 
 	return &c, nil
 }

@@ -1,11 +1,12 @@
 package cmd
 
 import (
+	"fmt"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-//Verbose verbose logging turned on
-var Verbose bool
+var loglevel string
 
 var rootCmd = &cobra.Command{
 	Use:               "scccmd",
@@ -13,10 +14,20 @@ var rootCmd = &cobra.Command{
 	Short:             "Spring Cloud Config management tool",
 	Long: `Commandline tool used for managing configuration from Spring Cloud Config Server.
 Tool currently provides functionality t get (download) config file from server.`,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		lvl, err := log.ParseLevel(loglevel)
+		if err != nil {
+			return err
+		}
+
+		log.SetLevel(lvl)
+		return nil
+	},
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().StringVar(&loglevel, "log-level", "info", fmt.Sprintf("command log level (options: %s)", log.AllLevels))
+
 	rootCmd.AddCommand(getCmd)
 	rootCmd.AddCommand(genDocCmd)
 	rootCmd.AddCommand(encryptCmd)

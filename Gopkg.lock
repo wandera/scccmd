@@ -20,6 +20,12 @@
   version = "v1.0.8"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/dimiro1/health"
+  packages = ["."]
+  revision = "22672c48855646f5d54b6315336d2e3fee6eef81"
+
+[[projects]]
   name = "github.com/emicklei/go-restful"
   packages = [
     ".",
@@ -78,16 +84,6 @@
   name = "github.com/golang/glog"
   packages = ["."]
   revision = "23def4e6c14b4da8ac2ed8007337bc5eb5007998"
-
-[[projects]]
-  name = "github.com/golang/protobuf"
-  packages = [
-    "jsonpb",
-    "proto",
-    "ptypes/struct"
-  ]
-  revision = "925541529c1fa6821df4e44ce2723319eb2be768"
-  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -290,6 +286,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "300535859bf440cd6be97b29432d851438a22a4ac3c023d83918fabf7ca2a20b"
+  inputs-digest = "3cd401477437e7400255ee1e165a834cfd60c73affafe414c36aea7aae370b33"
   solver-name = "gps-cdcl"
   solver-version = 1

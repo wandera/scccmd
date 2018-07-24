@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"github.com/dimiro1/health"
 	"github.com/howeyc/fsnotify"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -168,7 +169,10 @@ func NewWebhook(p WebhookParameters) (*Webhook, error) {
 	// mtls disabled because apiserver webhook cert usage is still TBD.
 	wh.server.TLSConfig = &tls.Config{GetCertificate: wh.getCert}
 	h := http.NewServeMux()
+	healthHandler := health.NewHandler()
+	healthHandler.AddChecker("webhook", wh)
 	h.HandleFunc("/inject", wh.serveInject)
+	h.Handle("/health", healthHandler)
 	wh.server.Handler = h
 
 	return wh, nil
@@ -273,8 +277,30 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	}
 	if _, err := w.Write(resp); err != nil {
 		log.Printf("Could not write response: %v", err)
-		http.Error(w, fmt.Sprintf("could write response: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("could not write response: %v", err), http.StatusInternalServerError)
 	}
+}
+
+// Check check that webhook is up
+func (wh *Webhook) Check() health.Health {
+	whHealth := health.NewHealth()
+	whHealth.Up()
+
+	_, err := loadConfig(wh.configFile)
+	if err != nil {
+		whHealth.Down().AddInfo("config", fmt.Sprintf("error: %v", err))
+	} else {
+		whHealth.AddInfo("config", "configuration loaded")
+	}
+
+	_, err = tls.LoadX509KeyPair(wh.certFile, wh.keyFile)
+	if err != nil {
+		whHealth.Down().AddInfo("cert", fmt.Sprintf("error: %v", err))
+	} else {
+		whHealth.AddInfo("cert", "certificate loaded")
+	}
+
+	return whHealth
 }
 
 func (wh *Webhook) inject(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionResponse {

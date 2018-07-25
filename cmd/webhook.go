@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"github.com/WanderaOrg/scccmd/pkg/inject"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -41,9 +41,9 @@ func executeWebhook(args []string) error {
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
-	log.Println("Config webhook started")
+	log.Info("Config webhook started")
 	<-signalChan
-	log.Println("Shutdown signal received, exiting...")
+	log.Info("Shutdown signal received, exiting...")
 	close(stop)
 
 	return nil

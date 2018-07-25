@@ -3,11 +3,11 @@ package inject
 import (
 	"encoding/json"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"log"
 	"strings"
 )
 
@@ -179,7 +179,7 @@ func injectRequired(ignored []string, namespacePolicy InjectionPolicy, metadata 
 
 	status := annotations[annotationStatusKey]
 
-	log.Printf("Sidecar injection policy for %v/%v: namespacePolicy:%v useDefault:%v inject:%v status:%q required:%v",
+	log.Infof("Sidecar injection policy for %v/%v: namespacePolicy:%v useDefault:%v inject:%v status:%q required:%v",
 		metadata.Namespace, metadata.Name, namespacePolicy, useDefault, inject, status, required)
 
 	return required
@@ -219,7 +219,7 @@ func calculateImageArgs(c *WebhookConfig, a map[string]string, podSpec *corev1.P
 	if application, ok = a[c.AnnotationPrefix+"application"]; !ok {
 		if len(podSpec.Containers) > 0 {
 			application = podSpec.Containers[0].Name
-			log.Printf("defaulting application name to %s\n", application)
+			log.Debugf("defaulting application name to %s\n", application)
 		}
 	}
 

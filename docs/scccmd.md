@@ -10,8 +10,8 @@ Tool currently provides functionality t get (download) config file from server.
 ### Options
 
 ```
-  -h, --help      help for scccmd
-  -v, --verbose   verbose output
+  -h, --help               help for scccmd
+      --log-level string   command log level (options: [panic fatal error warning info debug]) (default "info")
 ```
 
 ### SEE ALSO

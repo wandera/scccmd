@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/WanderaOrg/scccmd/pkg/client"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 )
@@ -55,18 +56,15 @@ func ExecuteGetValues(args []string) error {
 	}
 
 	if gp.destination != "" {
-		if Verbose {
-			fmt.Println("Config server response:")
-			fmt.Println(resp)
-		}
+		log.Debug("Config server response:")
+		log.Debug(resp)
 
 		if err = ioutil.WriteFile(gp.destination, []byte(resp), 0644); err != nil {
 			return err
 		}
 
-		if Verbose {
-			fmt.Println("Response written to: ", gp.destination)
-		}
+		log.Debug("Response written to: ", gp.destination)
+
 	} else {
 		fmt.Print(resp)
 	}
@@ -85,18 +83,14 @@ func ExecuteGetFiles(args []string) error {
 			return err
 		}
 
-		if Verbose {
-			fmt.Println("Config server response:")
-			fmt.Println(string(resp))
-		}
+		log.Debug("Config server response:")
+		log.Debug(string(resp))
 
 		if err = ioutil.WriteFile(mapping.destination, resp, 0644); err != nil {
 			return err
 		}
 
-		if Verbose {
-			fmt.Println("Response written to: ", mapping.destination)
-		}
+		log.Debug("Response written to: ", mapping.destination)
 	}
 	return nil
 }

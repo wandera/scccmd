@@ -80,7 +80,7 @@ func TestExecuteGetFiles(t *testing.T) {
 			var temp *os.File = nil
 			if tp.destFileName == "-" {
 				filename = "stdout"
-				old = os.Stdout // keep backup of the real stdout
+				old = os.Stdout               // keep backup of the real stdout
 				temp, _ = os.Create("stdout") // create temp file
 				os.Stdout = temp
 			} else {

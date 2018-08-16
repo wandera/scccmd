@@ -11,7 +11,7 @@ type Extension string
 
 //ParseExtension parse string into Extension type
 func ParseExtension(str string) (Extension, error) {
-	switch value := strings.TrimRight(str, "/n"); value {
+	switch value := strings.TrimRight(str, "\n"); value {
 	case "json":
 		return json, nil
 	case "properties":

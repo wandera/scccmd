@@ -367,7 +367,7 @@ func loadConfig(injectFile string) (*WebhookConfig, error) {
 		return nil, err
 	}
 
-	log.Infof("New configuration: sha256sum %x", sha256.Sum256(data))
+	log.Debugf("Configuration loaded: sha256sum %x", sha256.Sum256(data))
 
 	return &c, nil
 }

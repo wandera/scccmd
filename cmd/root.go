@@ -13,7 +13,7 @@ var rootCmd = &cobra.Command{
 	DisableAutoGenTag: true,
 	Short:             "Spring Cloud Config management tool",
 	Long: `Commandline tool used for managing configuration from Spring Cloud Config Server.
-Tool currently provides functionality t get (download) config file from server.`,
+Tool currently provides functionality to get (download) config file from server.`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		lvl, err := log.ParseLevel(loglevel)
 		if err != nil {
@@ -33,6 +33,7 @@ func init() {
 	rootCmd.AddCommand(encryptCmd)
 	rootCmd.AddCommand(decryptCmd)
 	rootCmd.AddCommand(webhookCmd)
+	rootCmd.AddCommand(diffCmd)
 }
 
 //Execute run root command (main entrypoint)

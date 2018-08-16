@@ -9,6 +9,8 @@ import (
 	"os"
 )
 
+const stdoutPlaceholder = "-"
+
 var gp = struct {
 	source       string
 	application  string
@@ -87,7 +89,7 @@ func ExecuteGetFiles(args []string) error {
 		log.Debug("Config server response:")
 		log.Debug(string(resp))
 
-		if mapping.destination == "-" {
+		if mapping.destination == stdoutPlaceholder {
 			os.Stdout.Write(resp)
 			fmt.Println()
 			log.Debug("Response written to stdout")

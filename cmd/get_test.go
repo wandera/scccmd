@@ -78,21 +78,20 @@ func TestExecuteGetFiles(t *testing.T) {
 			filename := ""
 			var old *os.File = nil
 			var temp *os.File = nil
-			if tp.destFileName == "-" {
+			if tp.destFileName == stdoutPlaceholder {
 				filename = "stdout"
 				old = os.Stdout               // keep backup of the real stdout
 				temp, _ = os.Create("stdout") // create temp file
 				os.Stdout = temp
+				defer func() {
+					temp.Close()
+					os.Stdout = old // restoring the real stdout
+				}()
 			} else {
 				filename = tp.destFileName
 			}
 			if err := ExecuteGetFiles(nil); err != nil {
 				t.Error("Execute failed with: ", err)
-			}
-
-			if tp.destFileName == "-" {
-				temp.Close()
-				os.Stdout = old // restoring the real stdout
 			}
 
 			raw, err := ioutil.ReadFile(filename)

@@ -6,7 +6,10 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"io/ioutil"
+	"os"
 )
+
+const stdoutPlaceholder = "-"
 
 var gp = struct {
 	source       string
@@ -86,11 +89,17 @@ func ExecuteGetFiles(args []string) error {
 		log.Debug("Config server response:")
 		log.Debug(string(resp))
 
-		if err = ioutil.WriteFile(mapping.destination, resp, 0644); err != nil {
-			return err
-		}
+		if mapping.destination == stdoutPlaceholder {
+			os.Stdout.Write(resp)
+			fmt.Println()
+			log.Debug("Response written to stdout")
+		} else {
+			if err = ioutil.WriteFile(mapping.destination, resp, 0644); err != nil {
+				return err
+			}
 
-		log.Debug("Response written to: ", mapping.destination)
+			log.Debug("Response written to: ", mapping.destination)
+		}
 	}
 	return nil
 }
@@ -105,7 +114,7 @@ func init() {
 	getCmd.MarkFlagRequired("source")
 	getCmd.MarkFlagRequired("application")
 
-	getFilesCmd.Flags().VarP(&gp.fileMappings, "files", "f", "files to get in form of source:destination pairs, example '--files application.yaml:config.yaml'")
+	getFilesCmd.Flags().VarP(&gp.fileMappings, "files", "f", "files to get in form of source:destination pairs, you can use - as a output to stdout, example '--files application.yaml:config.yaml'")
 	getFilesCmd.MarkFlagRequired("files")
 
 	getValuesCmd.Flags().StringVarP(&gp.format, "format", "f", "yaml", "output format might be one of 'json|yaml|properties'")

@@ -48,6 +48,13 @@ func TestExecuteGetFiles(t *testing.T) {
 			"app.yaml",
 			"config.yaml",
 			"/app/prod/1.0.0/app.yaml"},
+		{"{\"foo\":\"bar\"}",
+			"app",
+			"default",
+			"master",
+			"src",
+			"-",
+			"/app/default/master/src"},
 	}
 
 	for _, tp := range testParams {
@@ -68,12 +75,27 @@ func TestExecuteGetFiles(t *testing.T) {
 			gp.fileMappings = FileMappings{mappings: make([]FileMapping, 1)}
 			gp.fileMappings.mappings[0] = FileMapping{source: tp.srcFileName, destination: tp.destFileName}
 
+			filename := ""
+			var old *os.File = nil
+			var temp *os.File = nil
+			if tp.destFileName == stdoutPlaceholder {
+				filename = "stdout"
+				old = os.Stdout               // keep backup of the real stdout
+				temp, _ = os.Create("stdout") // create temp file
+				os.Stdout = temp
+				defer func() {
+					temp.Close()
+					os.Stdout = old // restoring the real stdout
+				}()
+			} else {
+				filename = tp.destFileName
+			}
 			if err := ExecuteGetFiles(nil); err != nil {
 				t.Error("Execute failed with: ", err)
 			}
 
-			raw, err := ioutil.ReadFile(tp.destFileName)
-			defer os.Remove(tp.destFileName)
+			raw, err := ioutil.ReadFile(filename)
+			defer os.Remove(filename)
 			if err != nil {
 				t.Error("Expected to download file: ", err)
 			}

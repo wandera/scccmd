@@ -13,7 +13,7 @@ scccmd get files [flags]
 ### Options
 
 ```
-  -f, --files FileMappings   files to get in form of source:destination pairs, example '--files application.yaml:config.yaml'
+  -f, --files FileMappings   files to get in form of source:destination pairs, you can use - as a output to stdout, example '--files application.yaml:config.yaml'
   -h, --help                 help for files
 ```
 

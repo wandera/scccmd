@@ -10,8 +10,8 @@ import (
 	"testing"
 )
 
-func TestNoArgExecute(t *testing.T) {
-	err := ExecuteGetFiles(nil)
+func TestNoArgGetExecute(t *testing.T) {
+	err := ExecuteDiffFiles(nil)
 	if err != nil {
 		t.Error("Execute failed with: ", err)
 	}
@@ -115,25 +115,29 @@ func TestExecuteGetValues(t *testing.T) {
 		label        string
 		destFileName string
 		requestURI   string
+		format       string
 	}{
 		{"{\"foo\":\"bar\"}",
 			"app",
 			"default",
 			"master",
 			"dest",
-			"/master/app-default.yml"},
-		{"{\"bar\":\"foo\"}",
+			"/master/app-default.json",
+			"json"},
+		{"bar=foo",
 			"app2",
 			"default",
 			"master",
 			"destination",
-			"/master/app2-default.yml"},
-		{"{\"foo\":\"bar\"}",
+			"/master/app2-default.properties",
+			"properties"},
+		{"\"foo\":\"bar\"",
 			"app",
 			"prod",
 			"1.0.0",
 			"config.yaml",
-			"/1.0.0/app-prod.yml"},
+			"/1.0.0/app-prod.yml",
+			"yaml"},
 	}
 
 	for _, tp := range testParams {
@@ -152,6 +156,7 @@ func TestExecuteGetValues(t *testing.T) {
 			gp.label = tp.label
 			gp.source = ts.URL
 			gp.destination = tp.destFileName
+			gp.format = tp.format
 
 			if err := ExecuteGetValues(nil); err != nil {
 				t.Error("Execute failed with: ", err)

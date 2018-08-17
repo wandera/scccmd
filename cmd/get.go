@@ -111,8 +111,8 @@ func init() {
 	getCmd.PersistentFlags().StringVarP(&gp.application, "application", "a", "", "name of the application to get the config for")
 	getCmd.PersistentFlags().StringVarP(&gp.profile, "profile", "p", "default", "configuration profile")
 	getCmd.PersistentFlags().StringVarP(&gp.label, "label", "l", "master", "configuration label")
-	getCmd.MarkFlagRequired("source")
-	getCmd.MarkFlagRequired("application")
+	getCmd.MarkPersistentFlagRequired("source")
+	getCmd.MarkPersistentFlagRequired("application")
 
 	getFilesCmd.Flags().VarP(&gp.fileMappings, "files", "f", "files to get in form of source:destination pairs, you can use - as a output to stdout, example '--files application.yaml:config.yaml'")
 	getFilesCmd.MarkFlagRequired("files")

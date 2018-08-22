@@ -63,7 +63,7 @@ func TestErrorResponse(t *testing.T) {
 		Application: tp.application,
 		Profile:     tp.profile,
 		Label:       tp.label,
-	}).FetchFile(tp.fileName)
+	}).FetchFileE(tp.fileName)
 
 	if err == nil {
 		t.Error("FetchFile should have failed")
@@ -98,7 +98,7 @@ func TestClient_FetchFile(t *testing.T) {
 		Application: tp.application,
 		Profile:     tp.profile,
 		Label:       tp.label,
-	}).FetchFile(tp.fileName)
+	}).FetchFileE(tp.fileName)
 
 	if err != nil {
 		t.Error("FetchFile failed with: ", err)

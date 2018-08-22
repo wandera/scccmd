@@ -45,7 +45,11 @@ type Client interface {
 	Config() *Config
 
 	//FetchFile queries the remote configuration service and returns the resulting file
-	FetchFile(source string) ([]byte, error)
+	//it is possible to pass error handler function as second parameter
+	FetchFile(source string, errorHandler func([]byte, error) []byte) []byte
+
+	//FetchFileE queries the remote configuration service and returns the resulting file
+	FetchFileE(source string) ([]byte, error)
 
 	//FetchAs queries the remote configuration service and returns the result in specified format
 	FetchAs(extension Extension) (string, error)
@@ -78,6 +82,16 @@ type client struct {
 	config *Config
 }
 
+//HttpError used for wrapping an exception returned from Client
+type HttpError struct {
+	StatusCode int
+}
+
+//Error is an implementation of error type interface method
+func (e HttpError) Error() string {
+	return fmt.Sprintf("unexpected response code '%d'", e.StatusCode)
+}
+
 //NewClient creates instance of the Client
 func NewClient(c Config) Client {
 	client := &client{
@@ -87,7 +101,7 @@ func NewClient(c Config) Client {
 	resty.SetHostURL(c.URI)
 	resty.OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
 		if response.StatusCode() >= 300 || response.StatusCode() < 200 {
-			return fmt.Errorf("unexpected response code '%s'", response.Status())
+			return HttpError{response.StatusCode()}
 		}
 		return nil
 	})
@@ -100,11 +114,23 @@ func (c *client) Config() *Config {
 	return c.config
 }
 
-//FetchFile queries the remote configuration service and returns the resulting file
-func (c *client) FetchFile(source string) ([]byte, error) {
+//FetchFileE queries the remote configuration service and returns the resulting file
+func (c *client) FetchFileE(source string) ([]byte, error) {
 	resp, err := resty.R().Get(c.formatFileURI(source))
 
 	return resp.Body(), err
+}
+
+//FetchFile queries the remote configuration service and returns the resulting file
+func (c *client) FetchFile(source string, errorHandler func([]byte, error) []byte) []byte {
+	resp, err := resty.R().Get(c.formatFileURI(source))
+
+	if err != nil {
+		return errorHandler(resp.Body(), err)
+	} else {
+		return resp.Body()
+	}
+
 }
 
 //FetchAsProperties queries the remote configuration service and returns the result as a Properties string

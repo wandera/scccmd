@@ -12,26 +12,30 @@ import (
 
 func TestExecuteDiffFiles(t *testing.T) {
 	var testParams = []struct {
-		appName      string
-		fileName     string
-		difftext     string
-		testContentA string
-		profileA     string
-		labelA       string
-		requestURIA  string
-		testContentB string
-		profileB     string
-		labelB       string
-		requestURIB  string
+		appName       string
+		fileName      string
+		difftext      string
+		testContentA  string
+		responseCodeA int
+		profileA      string
+		labelA        string
+		requestURIA   string
+		testContentB  string
+		responseCodeB int
+		profileB      string
+		labelB        string
+		requestURIB   string
 	}{
 		{"app",
 			"src",
 			"@@ -1,3 +1,3 @@\n foo\n-bar\n+baz\n ",
 			"foo\nbar",
+			200,
 			"default",
 			"master",
 			"/app/default/master/src",
 			"foo\nbaz",
+			200,
 			"default",
 			"develop",
 			"/app/default/develop/src",
@@ -40,10 +44,12 @@ func TestExecuteDiffFiles(t *testing.T) {
 			"src",
 			"@@ -1,3 +1,3 @@\n foo\n-bar\n+baz\n ",
 			"foo\nbar",
+			200,
 			"development",
 			"master",
 			"/app/development/master/src",
 			"foo\nbaz",
+			200,
 			"qa",
 			"master",
 			"/app/qa/master/src",
@@ -52,10 +58,54 @@ func TestExecuteDiffFiles(t *testing.T) {
 			"src",
 			"",
 			"foo\nbar",
+			200,
 			"default",
 			"master",
 			"/app/default/master/src",
 			"foo\nbar",
+			200,
+			"default",
+			"develop",
+			"/app/default/develop/src",
+		},
+		{"app",
+			"src",
+			"@@ -1,3 +1 @@\n-foo\n-bar\n ",
+			"foo\nbar",
+			200,
+			"default",
+			"master",
+			"/app/default/master/src",
+			"error",
+			404,
+			"default",
+			"develop",
+			"/app/default/develop/src",
+		},
+		{"app",
+			"src",
+			"@@ -1 +1,3 @@\n+foo\n+bar\n ",
+			"error",
+			404,
+			"default",
+			"master",
+			"/app/default/master/src",
+			"foo\nbar",
+			200,
+			"default",
+			"develop",
+			"/app/default/develop/src",
+		},
+		{"app",
+			"src",
+			"",
+			"error",
+			404,
+			"default",
+			"master",
+			"/app/default/master/src",
+			"error",
+			404,
 			"default",
 			"develop",
 			"/app/default/develop/src",
@@ -66,8 +116,10 @@ func TestExecuteDiffFiles(t *testing.T) {
 		func() {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				if r.RequestURI == tp.requestURIA {
+					w.WriteHeader(tp.responseCodeA)
 					fmt.Fprintln(w, tp.testContentA)
 				} else if r.RequestURI == tp.requestURIB {
+					w.WriteHeader(tp.responseCodeB)
 					fmt.Fprintln(w, tp.testContentB)
 				} else {
 					t.Errorf("Expected call to '%s' or '%s', but got '%s' instead.", tp.requestURIA, tp.requestURIB, r.RequestURI)

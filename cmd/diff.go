@@ -55,9 +55,6 @@ func validateDiffParams(cmd *cobra.Command, args []string) error {
 	if diffp.targetProfile == "" {
 		diffp.targetProfile = diffp.profile
 	}
-	if diffp.label == diffp.targetLabel {
-		return errors.New(fmt.Sprintf("--label=%s and --target-label=%s, values should not be the same", diffp.label, diffp.targetLabel))
-	}
 	return nil
 }
 

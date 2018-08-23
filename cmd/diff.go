@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"github.com/WanderaOrg/scccmd/pkg/client"
 	"github.com/pmezard/go-difflib/difflib"
@@ -141,10 +140,25 @@ func ExecuteDiffFiles(args []string) error {
 			Context: 3,
 		}
 
-		difflib.WriteUnifiedDiff(os.Stdout, d)
+		diffString, err := difflib.GetUnifiedDiffString(d)
+
+		if err != nil {
+			return err
+		}
+
+		printFileDiff(diffString, filename)
 	}
 	log.Debug("Diff of files written to stdout")
 	return nil
+}
+
+func printFileDiff(diffString string, filename string) {
+	if len(diffString) > 0 {
+		fmt.Printf("diff a/%s b/%s\n", filename, filename)
+		fmt.Printf("--- a/%s profile=%s label=%s\n", filename, diffp.profile, diffp.label)
+		fmt.Printf("+++ b/%s profile=%s label=%s\n", filename, diffp.targetProfile, diffp.targetLabel)
+		fmt.Print(diffString)
+	}
 }
 
 func init() {

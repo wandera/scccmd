@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"github.com/WanderaOrg/scccmd/pkg/client"
 	"github.com/pmezard/go-difflib/difflib"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"net/http"
 	"os"
 	"strings"
 )
@@ -54,9 +54,6 @@ func validateDiffParams(cmd *cobra.Command, args []string) error {
 	if diffp.targetProfile == "" {
 		diffp.targetProfile = diffp.profile
 	}
-	if diffp.label == diffp.targetLabel {
-		return errors.New(fmt.Sprintf("--label=%s and --target-label=%s, values should not be the same", diffp.label, diffp.targetLabel))
-	}
 	return nil
 }
 
@@ -103,27 +100,38 @@ func ExecuteDiffValues(args []string) error {
 
 //ExecuteDiffFiles runs diff files cmd
 func ExecuteDiffFiles(args []string) error {
-	for _, filename := range strings.Split(diffp.files, ",") {
-		respA, err := client.
-			NewClient(client.Config{URI: diffp.source, Profile: diffp.profile, Application: diffp.application, Label: diffp.label}).
-			FetchFile(filename)
+	errorHandler := func(data []byte, err error) []byte {
+		if e, ok := err.(client.HttpError); ok && e.StatusCode == http.StatusNotFound {
+			return []byte{}
+		} else {
+			fmt.Println(err.Error())
+			return nil
+		}
+	}
 
-		if err != nil {
-			return err
+	for _, filename := range strings.Split(diffp.files, ",") {
+		respA := client.
+			NewClient(client.Config{URI: diffp.source, Profile: diffp.profile, Application: diffp.application, Label: diffp.label}).
+			FetchFile(filename, errorHandler)
+
+		if respA == nil {
+			return fmt.Errorf("File %s for label %s and profile %s cannot be retrieved from remote server %s",
+				filename, diffp.label, diffp.profile, diffp.source)
 		}
 
-		log.Debug("Config server response for version A:")
+		log.Debugf("Config server response for label %s, profile %s:", diffp.label, diffp.profile)
 		log.Debug(string(respA))
 
-		respB, err := client.
+		respB := client.
 			NewClient(client.Config{URI: diffp.source, Profile: diffp.targetProfile, Application: diffp.application, Label: diffp.targetLabel}).
-			FetchFile(filename)
+			FetchFile(filename, errorHandler)
 
-		if err != nil {
-			return err
+		if respB == nil {
+			return fmt.Errorf("File %s for label %s and profile %s cannot be retrieved from remote server %s",
+				filename, diffp.targetLabel, diffp.targetProfile, diffp.source)
 		}
 
-		log.Debug("Config server response for version B:")
+		log.Debugf("Config server response for label %s, profile %s:", diffp.targetLabel, diffp.targetProfile)
 		log.Debug(string(respB))
 
 		d := difflib.UnifiedDiff{
@@ -132,10 +140,25 @@ func ExecuteDiffFiles(args []string) error {
 			Context: 3,
 		}
 
-		difflib.WriteUnifiedDiff(os.Stdout, d)
+		diffString, err := difflib.GetUnifiedDiffString(d)
+
+		if err != nil {
+			return err
+		}
+
+		printFileDiff(diffString, filename)
 	}
 	log.Debug("Diff of files written to stdout")
 	return nil
+}
+
+func printFileDiff(diffString string, filename string) {
+	if len(diffString) > 0 {
+		fmt.Printf("diff a/%s b/%s\n", filename, filename)
+		fmt.Printf("--- a/%s profile=%s label=%s\n", filename, diffp.profile, diffp.label)
+		fmt.Printf("+++ b/%s profile=%s label=%s\n", filename, diffp.targetProfile, diffp.targetLabel)
+		fmt.Print(diffString)
+	}
 }
 
 func init() {

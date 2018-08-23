@@ -80,7 +80,7 @@ func ExecuteGetFiles(args []string) error {
 	for _, mapping := range gp.fileMappings.Mappings() {
 		resp, err := client.
 			NewClient(client.Config{URI: gp.source, Profile: gp.profile, Application: gp.application, Label: gp.label}).
-			FetchFile(mapping.source)
+			FetchFileE(mapping.source)
 
 		if err != nil {
 			return err

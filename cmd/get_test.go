@@ -11,7 +11,7 @@ import (
 )
 
 func TestNoArgGetExecute(t *testing.T) {
-	err := ExecuteDiffFiles(nil)
+	err := ExecuteGetFiles(nil)
 	if err != nil {
 		t.Error("Execute failed with: ", err)
 	}

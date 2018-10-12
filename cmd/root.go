@@ -34,6 +34,7 @@ func init() {
 	rootCmd.AddCommand(decryptCmd)
 	rootCmd.AddCommand(webhookCmd)
 	rootCmd.AddCommand(diffCmd)
+	rootCmd.AddCommand(versionCmd)
 }
 
 //Execute run root command (main entrypoint)

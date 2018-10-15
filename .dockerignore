@@ -11,3 +11,5 @@ vendor/
 *.prefs
 *.iml
 .idea
+.travis.yml
+scccmd

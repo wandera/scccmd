@@ -1,26 +1,18 @@
 # Builder image
-FROM golang:1.10 AS builder
-RUN curl -fsSL -o /usr/local/bin/dep https://github.com/golang/dep/releases/download/v0.4.1/dep-linux-amd64 \
-    && chmod +x /usr/local/bin/dep
+FROM golang:1.11 AS builder
 
-RUN mkdir -p /go/src/github.com/WanderaOrg/scccmd/
-WORKDIR /go/src/github.com/WanderaOrg/scccmd/
+WORKDIR /build
+COPY go.mod go.sum ./
+RUN go mod download
 
-COPY Gopkg.toml Gopkg.lock ./
-RUN dep ensure -vendor-only
-
-COPY cmd/ ./cmd
-COPY internal/ ./internal
-COPY pkg/ ./pkg
-COPY main.go .
-
-RUN CGO_ENABLED=0 go build -o bin/scccmd
-
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -v
 
 # Runtime image
-FROM alpine:latest
+FROM alpine:3.8
 RUN apk --no-cache add ca-certificates
-COPY --from=builder /go/src/github.com/WanderaOrg/scccmd/bin/scccmd /app/scccmd
+
+COPY --from=builder /build/scccmd /app/scccmd
 WORKDIR /app
 
 ENTRYPOINT ["./scccmd"]

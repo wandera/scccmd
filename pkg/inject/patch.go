@@ -47,6 +47,14 @@ func removeVolumeMounts(volumeMounts []corev1.VolumeMount, removed []string, pat
 	return patch
 }
 
+func removeAllVolumeMounts(containers []corev1.Container, volumeMounts []string) []rfc6902PatchOperation {
+	var patch []rfc6902PatchOperation
+	for i, container := range containers {
+		patch = append(patch, removeVolumeMounts(container.VolumeMounts, volumeMounts, fmt.Sprintf("/spec/containers/%d/volumeMounts", i))...)
+	}
+	return patch
+}
+
 func removeVolumes(volumes []corev1.Volume, removed []string, path string) (patch []rfc6902PatchOperation) {
 	names := map[string]bool{}
 	for _, name := range removed {
@@ -101,6 +109,14 @@ func addVolumeMount(target, added []corev1.VolumeMount, basePath string) (patch 
 			Path:  path,
 			Value: value,
 		})
+	}
+	return patch
+}
+
+func addAllVolumeMounts(containers []corev1.Container, volumeMounts []corev1.VolumeMount) []rfc6902PatchOperation {
+	var patch []rfc6902PatchOperation
+	for i, container := range containers {
+		patch = append(patch, addVolumeMount(container.VolumeMounts, volumeMounts, fmt.Sprintf("/spec/containers/%d/volumeMounts", i))...)
 	}
 	return patch
 }
@@ -165,11 +181,11 @@ func createPatch(pod *corev1.Pod, prevStatus *SidecarInjectionStatus, annotation
 	// Remove any containers previously injected by kube-inject using
 	// container and volume name as unique key for removal.
 	patch = append(patch, removeContainers(pod.Spec.InitContainers, prevStatus.InitContainers, "/spec/initContainers")...)
-	patch = append(patch, removeVolumeMounts(pod.Spec.Containers[0].VolumeMounts, prevStatus.VolumeMounts, "/spec/containers/0/volumeMounts")...)
+	patch = append(patch, removeAllVolumeMounts(pod.Spec.Containers, prevStatus.VolumeMounts)...)
 	patch = append(patch, removeVolumes(pod.Spec.Volumes, prevStatus.Volumes, "/spec/volumes")...)
 
 	patch = append(patch, addContainer(pod.Spec.InitContainers, sic.InitContainers, "/spec/initContainers")...)
-	patch = append(patch, addVolumeMount(pod.Spec.Containers[0].VolumeMounts, sic.VolumeMounts, "/spec/containers/0/volumeMounts")...)
+	patch = append(patch, addAllVolumeMounts(pod.Spec.Containers, sic.VolumeMounts)...)
 	patch = append(patch, addVolume(pod.Spec.Volumes, sic.Volumes, "/spec/volumes")...)
 
 	patch = append(patch, updateAnnotation(pod.Annotations, annotations)...)

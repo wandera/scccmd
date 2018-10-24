@@ -199,7 +199,7 @@ func makeTestData(t testing.TB, skip bool) []byte {
 		Spec: corev1.PodSpec{
 			Volumes:        []corev1.Volume{{Name: "v0"}},
 			InitContainers: []corev1.Container{{Name: "c0"}},
-			Containers:     []corev1.Container{{Name: "c1"}},
+			Containers:     []corev1.Container{{Name: "c1"}, {Name: "c2"}},
 		},
 	}
 
@@ -324,6 +324,16 @@ func TestRunAndServe(t *testing.T) {
 		{
 			"op":"add",
 			"path":"/spec/containers/0/volumeMounts",
+			"value":[
+				{
+					"name":"config-volume",
+					"mountPath":"/config"
+				}
+			]
+		},
+		{
+			"op":"add",
+			"path":"/spec/containers/1/volumeMounts",
 			"value":[
 				{
 					"name":"config-volume",

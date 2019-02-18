@@ -23,6 +23,7 @@ Tool currently provides functionality to get (download) config file from server.
 		log.SetLevel(lvl)
 		return nil
 	},
+	SilenceErrors: true,
 }
 
 func init() {

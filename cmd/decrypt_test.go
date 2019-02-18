@@ -32,7 +32,7 @@ func TestExecuteDecrypt(t *testing.T) {
 
 	dp.source = ts.URL
 	dp.value = tp.testContent
-	err := ExecuteDecrypt(nil)
+	err := ExecuteDecrypt()
 
 	if err != nil {
 		t.Error("Decrypt failed with: ", err)
@@ -55,6 +55,6 @@ func ExampleExecuteDecrypt() {
 
 	dp.source = ts.URL
 	dp.value = tp.testContent
-	ExecuteDecrypt(nil)
+	ExecuteDecrypt()
 	//Output: test
 }

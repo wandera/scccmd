@@ -33,7 +33,7 @@ var diffValuesCmd = &cobra.Command{
 	Use:   "values",
 	Short: "Diff the config values in specified format from the given config server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return ExecuteDiffValues(args)
+		return ExecuteDiffValues()
 	},
 }
 
@@ -41,7 +41,7 @@ var diffFilesCmd = &cobra.Command{
 	Use:   "files",
 	Short: "Diff the config files from the given config server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return ExecuteDiffFiles(args)
+		return ExecuteDiffFiles()
 	},
 }
 
@@ -58,7 +58,7 @@ func validateDiffParams(cmd *cobra.Command, args []string) error {
 }
 
 //ExecuteDiffValues runs diff values cmd
-func ExecuteDiffValues(args []string) error {
+func ExecuteDiffValues() error {
 	ext, err := client.ParseExtension(diffp.format)
 
 	if err != nil {
@@ -93,15 +93,13 @@ func ExecuteDiffValues(args []string) error {
 		Context: 3,
 	}
 
-	difflib.WriteUnifiedDiff(os.Stdout, d)
-
-	return nil
+	return difflib.WriteUnifiedDiff(os.Stdout, d)
 }
 
 //ExecuteDiffFiles runs diff files cmd
-func ExecuteDiffFiles(args []string) error {
+func ExecuteDiffFiles() error {
 	errorHandler := func(data []byte, err error) []byte {
-		if e, ok := err.(client.HttpError); ok && e.StatusCode == http.StatusNotFound {
+		if e, ok := err.(client.HttpError); ok && e.StatusCode() == http.StatusNotFound {
 			return []byte{}
 		} else {
 			fmt.Println(err.Error())
@@ -115,7 +113,7 @@ func ExecuteDiffFiles(args []string) error {
 			FetchFile(filename, errorHandler)
 
 		if respA == nil {
-			return fmt.Errorf("File %s for label %s and profile %s cannot be retrieved from remote server %s",
+			return fmt.Errorf("file %s for label %s and profile %s cannot be retrieved from remote server %s",
 				filename, diffp.label, diffp.profile, diffp.source)
 		}
 
@@ -127,7 +125,7 @@ func ExecuteDiffFiles(args []string) error {
 			FetchFile(filename, errorHandler)
 
 		if respB == nil {
-			return fmt.Errorf("File %s for label %s and profile %s cannot be retrieved from remote server %s",
+			return fmt.Errorf("file %s for label %s and profile %s cannot be retrieved from remote server %s",
 				filename, diffp.targetLabel, diffp.targetProfile, diffp.source)
 		}
 
@@ -170,12 +168,12 @@ func init() {
 	diffCmd.PersistentFlags().StringVar(&diffp.label, "label", "master", "configuration label")
 	diffCmd.PersistentFlags().StringVar(&diffp.targetLabel, "target-label", "", "second label to diff with")
 	diffCmd.PersistentFlags().StringVar(&diffp.targetProfile, "target-profile", "", "second profile to diff with, --profile value will be used, if not defined")
-	diffCmd.MarkPersistentFlagRequired("source")
-	diffCmd.MarkPersistentFlagRequired("application")
-	diffCmd.MarkPersistentFlagRequired("target-label")
+	_ = diffCmd.MarkPersistentFlagRequired("source")
+	_ = diffCmd.MarkPersistentFlagRequired("application")
+	_ = diffCmd.MarkPersistentFlagRequired("target-label")
 
 	diffFilesCmd.Flags().StringVarP(&diffp.files, "files", "f", "", "files to get in form of file1,file2, example '--files application.yaml,config.yaml'")
-	diffFilesCmd.MarkFlagRequired("files")
+	_ = diffFilesCmd.MarkFlagRequired("files")
 
 	diffValuesCmd.Flags().StringVarP(&diffp.format, "format", "f", "yaml", "output format might be one of 'json|yaml|properties'")
 }

@@ -17,12 +17,12 @@ var decryptCmd = &cobra.Command{
 	Use:   "decrypt",
 	Short: "Decrypt the value server-side and prints the response",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return ExecuteDecrypt(args)
+		return ExecuteDecrypt()
 	},
 }
 
 //ExecuteDecrypt runs decrypt cmd
-func ExecuteDecrypt(args []string) error {
+func ExecuteDecrypt() error {
 	if dp.value == "" {
 		bytes, err := ioutil.ReadAll(os.Stdin)
 
@@ -46,5 +46,5 @@ func ExecuteDecrypt(args []string) error {
 func init() {
 	decryptCmd.Flags().StringVarP(&dp.source, "source", "s", "", "address of the config server")
 	decryptCmd.Flags().StringVar(&dp.value, "value", "", "value to decrypt *WARNING* unsafe use standard-in instead")
-	decryptCmd.MarkFlagRequired("source")
+	_ = decryptCmd.MarkFlagRequired("source")
 }

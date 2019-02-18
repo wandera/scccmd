@@ -158,7 +158,7 @@ func TestExecuteDiffFiles(t *testing.T) {
 				os.Stdout = old // restoring the real stdout
 			}()
 
-			if err := ExecuteDiffFiles(nil); err != nil {
+			if err := ExecuteDiffFiles(); err != nil {
 				t.Error("Execute failed with: ", err)
 			}
 
@@ -257,7 +257,7 @@ func TestExecuteDiffValues(t *testing.T) {
 				os.Stdout = old // restoring the real stdout
 			}()
 
-			if err := ExecuteDiffValues(nil); err != nil {
+			if err := ExecuteDiffValues(); err != nil {
 				t.Error("Execute failed with: ", err)
 			}
 

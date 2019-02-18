@@ -125,7 +125,7 @@ func Test503Response(t *testing.T) {
 	count := 0
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
-		count ++
+		count++
 		if count == 1 {
 			w.WriteHeader(503)
 			return

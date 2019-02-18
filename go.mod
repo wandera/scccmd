@@ -13,7 +13,6 @@ require (
 	github.com/go-openapi/jsonreference v0.0.0-20180322222742-3fb327e6747d // indirect
 	github.com/go-openapi/spec v0.0.0-20180326232708-9acd88844bc1 // indirect
 	github.com/go-openapi/swag v0.0.0-20180302192843-ceb469cb0fdf // indirect
-	github.com/go-resty/resty v0.0.0-20180302063752-65798e030a35
 	github.com/gogo/protobuf v1.0.0 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/golang/protobuf v1.2.0 // indirect
@@ -34,7 +33,6 @@ require (
 	github.com/spf13/pflag v1.0.0 // indirect
 	github.com/stretchr/testify v1.2.2 // indirect
 	golang.org/x/crypto v0.0.0-20180723164146-c126467f60eb // indirect
-	golang.org/x/net v0.0.0-20180307205306-07e8617a6db2 // indirect
 	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f // indirect
 	golang.org/x/sys v0.0.0-20180715085529-ac767d655b30 // indirect
 	golang.org/x/text v0.3.0 // indirect
@@ -42,6 +40,7 @@ require (
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
 	gopkg.in/inf.v0 v0.9.0 // indirect
+	gopkg.in/resty.v1 v1.11.0
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.1.1
 	k8s.io/api v0.0.0-20180103015100-006a217681ae

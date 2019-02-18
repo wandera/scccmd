@@ -2,7 +2,8 @@ package client
 
 import (
 	"fmt"
-	"github.com/go-resty/resty"
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/resty.v1"
 	"strings"
 )
 
@@ -84,12 +85,12 @@ type client struct {
 
 //HttpError used for wrapping an exception returned from Client
 type HttpError struct {
-	StatusCode int
+	*resty.Response
 }
 
 //Error is an implementation of error type interface method
 func (e HttpError) Error() string {
-	return fmt.Sprintf("unexpected response code '%d'", e.StatusCode)
+	return fmt.Sprintf("unexpected response %d %v", e.StatusCode(), string(e.Body()))
 }
 
 //NewClient creates instance of the Client
@@ -99,9 +100,12 @@ func NewClient(c Config) Client {
 	}
 
 	resty.SetHostURL(c.URI)
+	resty.SetRetryCount(3)
+	resty.SetLogger(log.StandardLogger().Writer())
+	resty.SetRedirectPolicy(resty.NoRedirectPolicy())
 	resty.OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
 		if response.StatusCode() >= 300 || response.StatusCode() < 200 {
-			return HttpError{response.StatusCode()}
+			return HttpError{response}
 		}
 		return nil
 	})

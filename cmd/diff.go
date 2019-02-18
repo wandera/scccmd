@@ -99,12 +99,11 @@ func ExecuteDiffValues() error {
 //ExecuteDiffFiles runs diff files cmd
 func ExecuteDiffFiles() error {
 	errorHandler := func(data []byte, err error) []byte {
-		if e, ok := err.(client.HttpError); ok && e.StatusCode() == http.StatusNotFound {
+		if e, ok := err.(client.HTTPError); ok && e.StatusCode() == http.StatusNotFound {
 			return []byte{}
-		} else {
-			fmt.Println(err.Error())
-			return nil
 		}
+		fmt.Println(err.Error())
+		return nil
 	}
 
 	for _, filename := range strings.Split(diffp.files, ",") {

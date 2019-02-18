@@ -83,13 +83,13 @@ type client struct {
 	config *Config
 }
 
-//HttpError used for wrapping an exception returned from Client
-type HttpError struct {
+//HTTPError used for wrapping an exception returned from Client
+type HTTPError struct {
 	*resty.Response
 }
 
 //Error is an implementation of error type interface method
-func (e HttpError) Error() string {
+func (e HTTPError) Error() string {
 	return fmt.Sprintf("unexpected response %d %v", e.StatusCode(), string(e.Body()))
 }
 
@@ -105,7 +105,7 @@ func NewClient(c Config) Client {
 	resty.SetRedirectPolicy(resty.NoRedirectPolicy())
 	resty.OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
 		if response.StatusCode() >= 300 || response.StatusCode() < 200 {
-			return HttpError{response}
+			return HTTPError{response}
 		}
 		return nil
 	})
@@ -131,10 +131,8 @@ func (c *client) FetchFile(source string, errorHandler func([]byte, error) []byt
 
 	if err != nil {
 		return errorHandler(resp.Body(), err)
-	} else {
-		return resp.Body()
 	}
-
+	return resp.Body()
 }
 
 //FetchAsProperties queries the remote configuration service and returns the result as a Properties string

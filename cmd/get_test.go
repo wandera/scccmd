@@ -76,8 +76,8 @@ func TestExecuteGetFiles(t *testing.T) {
 			gp.fileMappings.mappings[0] = FileMapping{source: tp.srcFileName, destination: tp.destFileName}
 
 			filename := ""
-			var old *os.File = nil
-			var temp *os.File = nil
+			var old *os.File
+			var temp *os.File
 			if tp.destFileName == stdoutPlaceholder {
 				filename = "stdout"
 				old = os.Stdout               // keep backup of the real stdout

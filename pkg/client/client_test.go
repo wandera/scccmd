@@ -129,10 +129,9 @@ func Test503Response(t *testing.T) {
 		if count == 1 {
 			w.WriteHeader(503)
 			return
-		} else {
-			_, _ = fmt.Fprintln(w, tp.testContent)
-			return
 		}
+		_, _ = fmt.Fprintln(w, tp.testContent)
+		return
 	}))
 	defer ts.Close()
 

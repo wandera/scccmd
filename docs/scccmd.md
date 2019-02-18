@@ -21,5 +21,6 @@ Tool currently provides functionality to get (download) config file from server.
 * [scccmd encrypt](scccmd_encrypt.md)	 - Encrypt the value server-side and prints the response
 * [scccmd gendoc](scccmd_gendoc.md)	 - Generates documentation for this tool in Markdown format
 * [scccmd get](scccmd_get.md)	 - Get the config from the given config server
+* [scccmd version](scccmd_version.md)	 - Print the version information
 * [scccmd webhook](scccmd_webhook.md)	 - Runs K8s webhook for injecting config from Cloud Config Server
 

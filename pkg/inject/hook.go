@@ -314,13 +314,13 @@ func (wh *Webhook) inject(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionRespons
 		return toAdmissionResponse(err)
 	}
 
-	log.Infof("AdmissionReview for Kind=%v Namespace=%v Name=%v (%v) UID=%v Rfc6902PatchOperation=%v UserInfo=%v",
+	log.Infof("AdmissionReview for %s/%s/%s (%v) UID=%v Rfc6902PatchOperation=%v UserInfo=%v",
 		req.Kind, req.Namespace, req.Name, pod.Name, req.UID, req.Operation, req.UserInfo)
 	log.Debugf("Object: %v", string(req.Object.Raw))
 	log.Debugf("OldObject: %v", string(req.OldObject.Raw))
 
 	if !injectRequired(ignoredNamespaces, wh.config.Policy, &pod.ObjectMeta, injectKey, statusKey) {
-		log.Infof("Skipping %s/%s due to policy check", pod.Namespace, pod.Name)
+		log.Infof("Skipping %s/%s/%s due to policy check", req.Kind, pod.Namespace, pod.Name)
 		return &v1beta1.AdmissionResponse{
 			Allowed: true,
 		}
@@ -338,7 +338,7 @@ func (wh *Webhook) inject(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionRespons
 		return toAdmissionResponse(err)
 	}
 
-	log.Debugf("AdmissionResponse: patch=%v\n", string(patchBytes))
+	log.Debugf("AdmissionResponse: patch=%s", string(patchBytes))
 
 	reviewResponse := v1beta1.AdmissionResponse{
 		Allowed: true,

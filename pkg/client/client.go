@@ -2,7 +2,8 @@ package client
 
 import (
 	"fmt"
-	"github.com/go-resty/resty"
+	log "github.com/sirupsen/logrus"
+	"gopkg.in/resty.v1"
 	"strings"
 )
 
@@ -82,14 +83,14 @@ type client struct {
 	config *Config
 }
 
-//HttpError used for wrapping an exception returned from Client
-type HttpError struct {
-	StatusCode int
+//HTTPError used for wrapping an exception returned from Client
+type HTTPError struct {
+	*resty.Response
 }
 
 //Error is an implementation of error type interface method
-func (e HttpError) Error() string {
-	return fmt.Sprintf("unexpected response code '%d'", e.StatusCode)
+func (e HTTPError) Error() string {
+	return fmt.Sprintf("unexpected response %d %v", e.StatusCode(), string(e.Body()))
 }
 
 //NewClient creates instance of the Client
@@ -99,9 +100,12 @@ func NewClient(c Config) Client {
 	}
 
 	resty.SetHostURL(c.URI)
+	resty.SetRetryCount(3)
+	resty.SetLogger(log.StandardLogger().Writer())
+	resty.SetRedirectPolicy(resty.NoRedirectPolicy())
 	resty.OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
 		if response.StatusCode() >= 300 || response.StatusCode() < 200 {
-			return HttpError{response.StatusCode()}
+			return HTTPError{response}
 		}
 		return nil
 	})
@@ -127,10 +131,8 @@ func (c *client) FetchFile(source string, errorHandler func([]byte, error) []byt
 
 	if err != nil {
 		return errorHandler(resp.Body(), err)
-	} else {
-		return resp.Body()
 	}
-
+	return resp.Body()
 }
 
 //FetchAsProperties queries the remote configuration service and returns the result as a Properties string

@@ -70,6 +70,85 @@ func TestErrorResponse(t *testing.T) {
 	}
 }
 
+func TestRedirectResponse(t *testing.T) {
+	var tp = struct {
+		application string
+		profile     string
+		label       string
+		URI         string
+		testContent string
+		fileName    string
+	}{
+		"service",
+		"profile",
+		"master",
+		"/service/profile/master/File",
+		"test",
+		"File",
+	}
+
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
+		w.Header().Add("location", "http://somwhere.el.se")
+		w.WriteHeader(301)
+	}))
+	defer ts.Close()
+
+	_, err := NewClient(Config{
+		URI:         ts.URL,
+		Application: tp.application,
+		Profile:     tp.profile,
+		Label:       tp.label,
+	}).FetchFileE(tp.fileName)
+
+	if err == nil {
+		t.Error("FetchFile should have failed")
+	}
+}
+
+func Test503Response(t *testing.T) {
+	var tp = struct {
+		application string
+		profile     string
+		label       string
+		URI         string
+		testContent string
+		fileName    string
+	}{
+		"service",
+		"profile",
+		"master",
+		"/service/profile/master/File",
+		"test",
+		"File",
+	}
+	count := 0
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
+		count++
+		if count == 1 {
+			w.WriteHeader(503)
+			return
+		}
+		_, _ = fmt.Fprintln(w, tp.testContent)
+		return
+	}))
+	defer ts.Close()
+
+	cont, err := NewClient(Config{
+		URI:         ts.URL,
+		Application: tp.application,
+		Profile:     tp.profile,
+		Label:       tp.label,
+	}).FetchFileE(tp.fileName)
+
+	if err != nil {
+		t.Error("FetchFile failed with: ", err)
+	}
+
+	testutil.AssertString(t, "Content mismatch", tp.testContent, string(cont))
+}
+
 func TestClient_FetchFile(t *testing.T) {
 	var tp = struct {
 		application string
@@ -89,7 +168,7 @@ func TestClient_FetchFile(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
-		fmt.Fprintln(w, tp.testContent)
+		_, _ = fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()
 
@@ -126,7 +205,7 @@ func TestClient_FetchAsYAML(t *testing.T) {
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
-		fmt.Fprintln(w, tp.testContent)
+		_, _ = fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()
 
@@ -158,10 +237,10 @@ func TestClient_Encrypt(t *testing.T) {
 		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 
 		buf := new(bytes.Buffer)
-		buf.ReadFrom(r.Body)
+		_, _ = buf.ReadFrom(r.Body)
 
 		testutil.AssertString(t, "Incorrect Content received", tp.testContent, buf.String())
-		fmt.Fprintln(w, tp.testContent)
+		_, _ = fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()
 
@@ -190,10 +269,10 @@ func TestClient_Decrypt(t *testing.T) {
 		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 
 		buf := new(bytes.Buffer)
-		buf.ReadFrom(r.Body)
+		_, _ = buf.ReadFrom(r.Body)
 
 		testutil.AssertString(t, "Incorrect Content received", tp.testContent, buf.String())
-		fmt.Fprintln(w, tp.testContent)
+		_, _ = fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()
 

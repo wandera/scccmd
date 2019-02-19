@@ -20,11 +20,11 @@ var webhookCmd = &cobra.Command{
 	Use:   "webhook",
 	Short: "Runs K8s webhook for injecting config from Cloud Config Server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return executeWebhook(args)
+		return executeWebhook()
 	},
 }
 
-func executeWebhook(args []string) error {
+func executeWebhook() error {
 	wh, err := inject.NewWebhook(inject.WebhookParameters{
 		Port:       wp.port,
 		ConfigFile: wp.configFile,
@@ -50,8 +50,8 @@ func executeWebhook(args []string) error {
 }
 
 func init() {
-	webhookCmd.Flags().StringVarP(&wp.configFile, "config-file", "f", "config/config.yaml", "The configuration namespace")
-	webhookCmd.Flags().StringVarP(&wp.certFile, "cert-file", "c", "keys/publickey.cer", "Location of public part of SSL certificate")
-	webhookCmd.Flags().StringVarP(&wp.keyFile, "key-file", "k", "keys/private.key", "Location of private key of SSL certificate")
-	webhookCmd.Flags().IntVarP(&wp.port, "port", "p", 443, "Webhook port")
+	webhookCmd.Flags().StringVarP(&wp.configFile, "config-file", "f", "config/config.yaml", "the configuration file")
+	webhookCmd.Flags().StringVarP(&wp.certFile, "cert-file", "c", "keys/publickey.cer", "location of public part of SSL certificate")
+	webhookCmd.Flags().StringVarP(&wp.keyFile, "key-file", "k", "keys/private.key", "location of private key of SSL certificate")
+	webhookCmd.Flags().IntVarP(&wp.port, "port", "p", 443, "webhook port")
 }

@@ -11,7 +11,7 @@ import (
 )
 
 func TestNoArgGetExecute(t *testing.T) {
-	err := ExecuteGetFiles(nil)
+	err := ExecuteGetFiles()
 	if err != nil {
 		t.Error("Execute failed with: ", err)
 	}
@@ -76,8 +76,8 @@ func TestExecuteGetFiles(t *testing.T) {
 			gp.fileMappings.mappings[0] = FileMapping{source: tp.srcFileName, destination: tp.destFileName}
 
 			filename := ""
-			var old *os.File = nil
-			var temp *os.File = nil
+			var old *os.File
+			var temp *os.File
 			if tp.destFileName == stdoutPlaceholder {
 				filename = "stdout"
 				old = os.Stdout               // keep backup of the real stdout
@@ -90,7 +90,7 @@ func TestExecuteGetFiles(t *testing.T) {
 			} else {
 				filename = tp.destFileName
 			}
-			if err := ExecuteGetFiles(nil); err != nil {
+			if err := ExecuteGetFiles(); err != nil {
 				t.Error("Execute failed with: ", err)
 			}
 
@@ -158,7 +158,7 @@ func TestExecuteGetValues(t *testing.T) {
 			gp.destination = tp.destFileName
 			gp.format = tp.format
 
-			if err := ExecuteGetValues(nil); err != nil {
+			if err := ExecuteGetValues(); err != nil {
 				t.Error("Execute failed with: ", err)
 			}
 

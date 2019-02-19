@@ -11,16 +11,16 @@ var genDocCmd = &cobra.Command{
 	Use:   "gendoc",
 	Short: "Generates documentation for this tool in Markdown format",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return executeGenDoc(args)
+		return executeGenDoc()
 	},
 }
 
-func executeGenDoc(args []string) error {
+func executeGenDoc() error {
 	err := doc.GenMarkdownTree(rootCmd, docDestination)
 	return err
 }
 
 func init() {
 	genDocCmd.Flags().StringVarP(&docDestination, "destination", "d", "", "destination for documentation")
-	genDocCmd.MarkFlagRequired("destination")
+	_ = genDocCmd.MarkFlagRequired("destination")
 }

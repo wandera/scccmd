@@ -30,7 +30,7 @@ var getValuesCmd = &cobra.Command{
 	Use:   "values",
 	Short: "Get the config values in specified format from the given config server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return ExecuteGetValues(args)
+		return ExecuteGetValues()
 	},
 }
 
@@ -38,12 +38,12 @@ var getFilesCmd = &cobra.Command{
 	Use:   "files",
 	Short: "Get the config files from the given config server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return ExecuteGetFiles(args)
+		return ExecuteGetFiles()
 	},
 }
 
 //ExecuteGetValues runs get values cmd
-func ExecuteGetValues(args []string) error {
+func ExecuteGetValues() error {
 	ext, err := client.ParseExtension(gp.format)
 
 	if err != nil {
@@ -76,7 +76,7 @@ func ExecuteGetValues(args []string) error {
 }
 
 //ExecuteGetFiles runs get files cmd
-func ExecuteGetFiles(args []string) error {
+func ExecuteGetFiles() error {
 	for _, mapping := range gp.fileMappings.Mappings() {
 		resp, err := client.
 			NewClient(client.Config{URI: gp.source, Profile: gp.profile, Application: gp.application, Label: gp.label}).
@@ -90,7 +90,7 @@ func ExecuteGetFiles(args []string) error {
 		log.Debug(string(resp))
 
 		if mapping.destination == stdoutPlaceholder {
-			os.Stdout.Write(resp)
+			_, _ = os.Stdout.Write(resp)
 			fmt.Println()
 			log.Debug("Response written to stdout")
 		} else {
@@ -111,11 +111,11 @@ func init() {
 	getCmd.PersistentFlags().StringVarP(&gp.application, "application", "a", "", "name of the application to get the config for")
 	getCmd.PersistentFlags().StringVarP(&gp.profile, "profile", "p", "default", "configuration profile")
 	getCmd.PersistentFlags().StringVarP(&gp.label, "label", "l", "master", "configuration label")
-	getCmd.MarkPersistentFlagRequired("source")
-	getCmd.MarkPersistentFlagRequired("application")
+	_ = getCmd.MarkPersistentFlagRequired("source")
+	_ = getCmd.MarkPersistentFlagRequired("application")
 
 	getFilesCmd.Flags().VarP(&gp.fileMappings, "files", "f", "files to get in form of source:destination pairs, you can use - as a output to stdout, example '--files application.yaml:config.yaml'")
-	getFilesCmd.MarkFlagRequired("files")
+	_ = getFilesCmd.MarkFlagRequired("files")
 
 	getValuesCmd.Flags().StringVarP(&gp.format, "format", "f", "yaml", "output format might be one of 'json|yaml|properties'")
 	getValuesCmd.Flags().StringVarP(&gp.destination, "destination", "d", "", "destination file name")

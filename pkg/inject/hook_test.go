@@ -312,7 +312,7 @@ func TestRunAndServe(t *testing.T) {
 	validPatch := []byte(`[
 		{
 			"op":"add",
-			"path":"/spec/initContainers/-",
+			"path":"/spec/initContainers/0",
 			"value":{
 				"name":"config-init",
 				"image":"wanderadock/scccmd",

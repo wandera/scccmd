@@ -311,15 +311,14 @@ func TestRunAndServe(t *testing.T) {
 	// nolint: lll
 	validPatch := []byte(`[
 		{
-			"op":"add",
-			"path":"/spec/initContainers/0",
-			"value":{
-				"name":"config-init",
-				"image":"wanderadock/scccmd",
-				"args":["get","values","--source","http://config-service.default.svc:8080","--application","c1","--profile","default","--label","master","--destination","config.yaml"],
-				"resources":{"limits":{"cpu":"50m","memory":"50M"},"requests":{"cpu":"10m","memory":"10M"}},
-				"volumeMounts":[{"name":"config-volume","mountPath":"/config"}]
-			}
+			"op": "add",
+			"path": "/spec/initContainers/0/volumeMounts",
+			"value": [
+			  {
+				"name": "config-volume",
+				"mountPath": "/config"
+			  }
+			]
 		},
 		{
 			"op":"add",
@@ -347,6 +346,17 @@ func TestRunAndServe(t *testing.T) {
 			"value":{
 				"name":"config-volume",
 				"emptyDir":{}
+			}
+		},
+		{
+			"op":"add",
+			"path":"/spec/initContainers/0",
+			"value":{
+				"name":"config-init",
+				"image":"wanderadock/scccmd",
+				"args":["get","values","--source","http://config-service.default.svc:8080","--application","c1","--profile","default","--label","master","--destination","config.yaml"],
+				"resources":{"limits":{"cpu":"50m","memory":"50M"},"requests":{"cpu":"10m","memory":"10M"}},
+				"volumeMounts":[{"name":"config-volume","mountPath":"/config"}]
 			}
 		},
 		{

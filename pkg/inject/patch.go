@@ -191,9 +191,5 @@ func createPatch(pod *corev1.Pod, prevStatus *SidecarInjectionStatus, annotation
 
 	patch = append(patch, updateAnnotation(pod.Annotations, annotations)...)
 
-	res, _ := json.Marshal(patch)
-
-	fmt.Println(fmt.Sprintf("%s", res))
-
 	return json.Marshal(patch)
 }

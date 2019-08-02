@@ -113,10 +113,10 @@ func addVolumeMount(target, added []corev1.VolumeMount, basePath string) (patch 
 	return patch
 }
 
-func addAllVolumeMounts(containers []corev1.Container, volumeMounts []corev1.VolumeMount) []rfc6902PatchOperation {
+func addAllVolumeMounts(containers []corev1.Container, volumeMounts []corev1.VolumeMount, path string) []rfc6902PatchOperation {
 	var patch []rfc6902PatchOperation
 	for i, container := range containers {
-		patch = append(patch, addVolumeMount(container.VolumeMounts, volumeMounts, fmt.Sprintf("/spec/containers/%d/volumeMounts", i))...)
+		patch = append(patch, addVolumeMount(container.VolumeMounts, volumeMounts, fmt.Sprintf(path, i))...)
 	}
 	return patch
 }
@@ -184,9 +184,10 @@ func createPatch(pod *corev1.Pod, prevStatus *SidecarInjectionStatus, annotation
 	patch = append(patch, removeAllVolumeMounts(pod.Spec.Containers, prevStatus.VolumeMounts)...)
 	patch = append(patch, removeVolumes(pod.Spec.Volumes, prevStatus.Volumes, "/spec/volumes")...)
 
-	patch = append(patch, insertContainer(pod.Spec.InitContainers, sic.InitContainers, "/spec/initContainers", "0")...)
-	patch = append(patch, addAllVolumeMounts(pod.Spec.Containers, sic.VolumeMounts)...)
+	patch = append(patch, addAllVolumeMounts(pod.Spec.InitContainers, sic.VolumeMounts, "/spec/initContainers/%d/volumeMounts")...)
+	patch = append(patch, addAllVolumeMounts(pod.Spec.Containers, sic.VolumeMounts, "/spec/containers/%d/volumeMounts")...)
 	patch = append(patch, addVolume(pod.Spec.Volumes, sic.Volumes, "/spec/volumes")...)
+	patch = append(patch, insertContainer(pod.Spec.InitContainers, sic.InitContainers, "/spec/initContainers", "0")...)
 
 	patch = append(patch, updateAnnotation(pod.Annotations, annotations)...)
 

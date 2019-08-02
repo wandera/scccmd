@@ -71,7 +71,7 @@ func removeVolumes(volumes []corev1.Volume, removed []string, path string) (patc
 	return patch
 }
 
-func addContainer(target, added []corev1.Container, basePath string) (patch []rfc6902PatchOperation) {
+func insertContainer(target, added []corev1.Container, basePath string, position string) (patch []rfc6902PatchOperation) {
 	first := len(target) == 0
 	var value interface{}
 	for _, add := range added {
@@ -81,7 +81,7 @@ func addContainer(target, added []corev1.Container, basePath string) (patch []rf
 			first = false
 			value = []corev1.Container{add}
 		} else {
-			path = path + "/-"
+			path = path + "/" + position
 		}
 		patch = append(patch, rfc6902PatchOperation{
 			Op:    "add",
@@ -184,7 +184,7 @@ func createPatch(pod *corev1.Pod, prevStatus *SidecarInjectionStatus, annotation
 	patch = append(patch, removeAllVolumeMounts(pod.Spec.Containers, prevStatus.VolumeMounts)...)
 	patch = append(patch, removeVolumes(pod.Spec.Volumes, prevStatus.Volumes, "/spec/volumes")...)
 
-	patch = append(patch, addContainer(pod.Spec.InitContainers, sic.InitContainers, "/spec/initContainers")...)
+	patch = append(patch, insertContainer(pod.Spec.InitContainers, sic.InitContainers, "/spec/initContainers", "0")...)
 	patch = append(patch, addAllVolumeMounts(pod.Spec.Containers, sic.VolumeMounts)...)
 	patch = append(patch, addVolume(pod.Spec.Volumes, sic.Volumes, "/spec/volumes")...)
 

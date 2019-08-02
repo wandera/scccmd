@@ -71,11 +71,7 @@ func removeVolumes(volumes []corev1.Volume, removed []string, path string) (patc
 	return patch
 }
 
-func insertContainer(target, added []corev1.Container, basePath string, args ...string) (patch []rfc6902PatchOperation) {
-	position := "-"
-	if len(args) > 0 {
-		position = args[0]
-	}
+func insertContainer(target, added []corev1.Container, basePath string, position string) (patch []rfc6902PatchOperation) {
 	first := len(target) == 0
 	var value interface{}
 	for _, add := range added {

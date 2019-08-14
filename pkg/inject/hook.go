@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/dimiro1/health"
 	"github.com/howeyc/fsnotify"
@@ -38,33 +39,33 @@ const (
 
 // WebhookConfigDefaults configures default init container values.
 type WebhookConfigDefaults struct {
-	ContainerName string `json:"container-name"`
-	Label         string `json:"label"`
-	Profile       string `json:"profile"`
-	VolumeName    string `json:"volume-name"`
-	VolumeMount   string `json:"volume-mount"`
-	Source        string `json:"source"`
+	ContainerName string `yaml:"container-name"`
+	Label         string `yaml:"label"`
+	Profile       string `yaml:"profile"`
+	VolumeName    string `yaml:"volume-name"`
+	VolumeMount   string `yaml:"volume-mount"`
+	Source        string `yaml:"source"`
 }
 
 // InitContainerResourcesList resources for init container
 type InitContainerResourcesList struct {
-	CPU    string `json:"cpu"`
-	Memory string `json:"memory"`
+	CPU    string `yaml:"cpu"`
+	Memory string `yaml:"memory"`
 }
 
 // InitContainerResources resources for init container
 type InitContainerResources struct {
-	Requests InitContainerResourcesList `json:"requests"`
-	Limits   InitContainerResourcesList `json:"limits"`
+	Requests InitContainerResourcesList `yaml:"requests"`
+	Limits   InitContainerResourcesList `yaml:"limits"`
 }
 
 // WebhookConfig struct representing webhook configuration values.
 type WebhookConfig struct {
-	AnnotationPrefix string                 `json:"annotation-prefix"`
-	Policy           InjectionPolicy        `json:"policy"`
-	ContainerImage   string                 `json:"container-image"`
-	Default          WebhookConfigDefaults  `json:"default"`
-	Resources        InitContainerResources `json:"resources"`
+	AnnotationPrefix string                 `yaml:"annotation-prefix"`
+	Policy           InjectionPolicy        `yaml:"policy"`
+	ContainerImage   string                 `yaml:"container-image"`
+	Default          WebhookConfigDefaults  `yaml:"default"`
+	Resources        InitContainerResources `yaml:"resources"`
 }
 
 // Webhook implements a mutating webhook for automatic config injection.
@@ -308,14 +309,23 @@ func (wh *Webhook) inject(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionRespons
 	injectKey := wh.config.AnnotationPrefix + "inject"
 
 	req := ar.Request
-	var pod corev1.Pod
-	if err := json.Unmarshal(req.Object.Raw, &pod); err != nil {
+	if req == nil {
+		log.Error("Could not parse request body")
+		return toAdmissionResponse(errors.New("cannot parse admission request body"))
+	}
+	pod := corev1.Pod{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Pod",
+		},
+	}
+	if _, _, err := deserializer.Decode(req.Object.Raw, nil, &pod); err != nil {
 		log.Errorf("Could not unmarshal raw object: %v", err)
 		return toAdmissionResponse(err)
 	}
 
-	log.Infof("AdmissionReview for %s/%s/%s (%v) UID=%v Rfc6902PatchOperation=%v UserInfo=%v",
-		req.Kind, req.Namespace, req.Name, pod.Name, req.UID, req.Operation, req.UserInfo)
+	log.Infof("AdmissionReview for %s/%s/%s UID=%v Rfc6902PatchOperation=%v UserInfo=%v",
+		pod.Kind, pod.Namespace, pod.Name, req.UID, req.Operation, req.UserInfo)
 	log.Debugf("Object: %v", string(req.Object.Raw))
 	log.Debugf("OldObject: %v", string(req.OldObject.Raw))
 
@@ -378,13 +388,4 @@ func toAdmissionResponse(err error) *v1beta1.AdmissionResponse {
 
 func init() {
 	_ = corev1.AddToScheme(runtimeScheme)
-	//_ = admissionregistrationv1beta1.AddToScheme(runtimeScheme)
-	//
-	//// The `v1` package from k8s.io/kubernetes/pkgp/apis/core/v1 has
-	//// the object defaulting functions which are not included in
-	//// k8s.io/api/corev1. The default functions are required by
-	//// runtime.ObjectDefaulter to workaround lack of server-side
-	//// defaulting with webhooks (see
-	//// https://github.com/kubernetes/kubernetes/issues/57982).
-	//_ = v1.AddToScheme(runtimeScheme)
 }

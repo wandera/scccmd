@@ -187,8 +187,6 @@ func TestInjectRequired(t *testing.T) {
 }
 
 func makeTestData(t testing.TB, skip bool) []byte {
-	t.Helper()
-
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "test",
@@ -355,7 +353,7 @@ func TestRunAndServe(t *testing.T) {
 				"name":"config-init",
 				"image":"wanderadock/scccmd",
 				"args":["get","values","--source","http://config-service.default.svc:8080","--application","c1","--profile","default","--label","master","--destination","config.yaml"],
-				"resources":{"limits":{"cpu":"50m","memory":"50M"},"requests":{"cpu":"10m","memory":"10M"}},
+				"resources":{"limits":{"cpu":"100m","memory":"50M"},"requests":{"cpu":"100m","memory":"10M"}},
 				"volumeMounts":[{"name":"config-volume","mountPath":"/config"}]
 			}
 		},

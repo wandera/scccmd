@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-//AssertString asserts string values and prints the expected and received values if failed
+// AssertString asserts string values and prints the expected and received values if failed
 func AssertString(t *testing.T, message string, expected string, got string) {
 	expected = trimString(expected)
 	got = trimString(got)

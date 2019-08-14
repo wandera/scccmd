@@ -21,7 +21,7 @@ var decryptCmd = &cobra.Command{
 	},
 }
 
-//ExecuteDecrypt runs decrypt cmd
+// ExecuteDecrypt runs decrypt cmd
 func ExecuteDecrypt() error {
 	if dp.value == "" {
 		bytes, err := ioutil.ReadAll(os.Stdin)

@@ -21,7 +21,7 @@ var encryptCmd = &cobra.Command{
 	},
 }
 
-//ExecuteEncrypt runs encrypt cmd
+// ExecuteEncrypt runs encrypt cmd
 func ExecuteEncrypt() error {
 	if ep.value == "" {
 		bytes, err := ioutil.ReadAll(os.Stdin)

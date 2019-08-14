@@ -56,5 +56,5 @@ func ExampleExecuteDecrypt() {
 	dp.source = ts.URL
 	dp.value = tp.testContent
 	ExecuteDecrypt()
-	//Output: test
+	// Output: test
 }

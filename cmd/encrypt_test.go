@@ -56,5 +56,5 @@ func ExampleExecuteEncrypt() {
 	ep.source = ts.URL
 	ep.value = tp.testContent
 	ExecuteEncrypt()
-	//Output: test
+	// Output: test
 }

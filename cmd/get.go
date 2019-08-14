@@ -42,7 +42,7 @@ var getFilesCmd = &cobra.Command{
 	},
 }
 
-//ExecuteGetValues runs get values cmd
+// ExecuteGetValues runs get values cmd
 func ExecuteGetValues() error {
 	ext, err := client.ParseExtension(gp.format)
 
@@ -75,7 +75,7 @@ func ExecuteGetValues() error {
 	return nil
 }
 
-//ExecuteGetFiles runs get files cmd
+// ExecuteGetFiles runs get files cmd
 func ExecuteGetFiles() error {
 	for _, mapping := range gp.fileMappings.Mappings() {
 		resp, err := client.

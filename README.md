@@ -1,15 +1,15 @@
 # scccmd - Spring Cloud Config cli tool
 
-[![Build Status](https://travis-ci.org/WanderaOrg/scccmd.svg?branch=master)](https://travis-ci.org/WanderaOrg/scccmd)
+[![Build Status](https://travis-ci.org/wandera/scccmd.svg?branch=master)](https://travis-ci.org/wandera/scccmd)
 [![Docker Build Status](https://img.shields.io/docker/build/wanderadock/scccmd.svg)](https://hub.docker.com/r/wanderadock/scccmd/)
-[![Go Report Card](https://goreportcard.com/badge/github.com/WanderaOrg/scccmd)](https://goreportcard.com/report/github.com/WanderaOrg/scccmd)
-[![GitHub release](https://img.shields.io/github/release/WanderaOrg/scccmd.svg)](https://github.com/WanderaOrg/scccmd/releases/latest)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/WanderaOrg/scccmd/blob/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/wandera/scccmd)](https://goreportcard.com/report/github.com/wandera/scccmd)
+[![GitHub release](https://img.shields.io/github/release/wandera/scccmd.svg)](https://github.com/wandera/scccmd/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/wandera/scccmd/blob/master/LICENSE)
 
 Tool for obtaining configuration from config server
 
 ### How to develop
-* Run `go get github.com/WanderaOrg/scccmd`
+* Run `go get github.com/wandera/scccmd`
 * Build by `go build -v`
 * Tests are started by `go test -v ./...`
 * Or if you dont want to setup your local go env just use the provided Dockerfile

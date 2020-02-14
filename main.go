@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/WanderaOrg/scccmd/cmd"
 	log "github.com/sirupsen/logrus"
+	"github.com/wandera/scccmd/cmd"
 )
 
 func main() {

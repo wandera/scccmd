@@ -3,7 +3,7 @@ package client
 import (
 	"bytes"
 	"fmt"
-	"github.com/WanderaOrg/scccmd/internal"
+	"github.com/wandera/scccmd/internal"
 	"net/http"
 	"net/http/httptest"
 	"testing"

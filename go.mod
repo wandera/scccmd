@@ -1,4 +1,4 @@
-module github.com/WanderaOrg/scccmd
+module github.com/wandera/scccmd
 
 require (
 	github.com/cpuguy83/go-md2man v1.0.8 // indirect

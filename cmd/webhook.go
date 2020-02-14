@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/WanderaOrg/scccmd/pkg/inject"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/wandera/scccmd/pkg/inject"
 	"os"
 	"os/signal"
 	"syscall"

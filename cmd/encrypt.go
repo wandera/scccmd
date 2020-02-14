@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/WanderaOrg/scccmd/pkg/client"
 	"github.com/spf13/cobra"
+	"github.com/wandera/scccmd/pkg/client"
 	"io/ioutil"
 	"os"
 )

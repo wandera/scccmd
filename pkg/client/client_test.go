@@ -122,31 +122,23 @@ func Test503Response(t *testing.T) {
 		"test",
 		"File",
 	}
-	count := 0
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
-		count++
-		if count == 1 {
-			w.WriteHeader(503)
-			return
-		}
-		_, _ = fmt.Fprintln(w, tp.testContent)
+		w.WriteHeader(503)
 		return
 	}))
 	defer ts.Close()
 
-	cont, err := NewClient(Config{
+	_, err := NewClient(Config{
 		URI:         ts.URL,
 		Application: tp.application,
 		Profile:     tp.profile,
 		Label:       tp.label,
 	}).FetchFileE(tp.fileName)
 
-	if err != nil {
-		t.Error("FetchFile failed with: ", err)
+	if err == nil {
+		t.Error("FetchFile should have failed")
 	}
-
-	testutil.AssertString(t, "Content mismatch", tp.testContent, string(cont))
 }
 
 func TestClient_FetchFile(t *testing.T) {

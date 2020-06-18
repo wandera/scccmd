@@ -2,8 +2,8 @@ package client
 
 import (
 	"fmt"
+	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
-	"gopkg.in/resty.v1"
 	"strings"
 )
 
@@ -81,6 +81,7 @@ type Config struct {
 
 type client struct {
 	config *Config
+	*resty.Client
 }
 
 // HTTPError used for wrapping an exception returned from Client
@@ -95,22 +96,22 @@ func (e HTTPError) Error() string {
 
 // NewClient creates instance of the Client
 func NewClient(c Config) Client {
-	client := &client{
+	r := resty.New().
+		SetHostURL(c.URI).
+		SetRetryCount(3).
+		SetLogger(log.StandardLogger()).
+		SetRedirectPolicy(resty.NoRedirectPolicy()).
+		OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
+			if response.StatusCode() >= 300 || response.StatusCode() < 200 {
+				return HTTPError{response}
+			}
+			return nil
+		})
+
+	return &client{
 		config: &c,
+		Client: r,
 	}
-
-	resty.SetHostURL(c.URI)
-	resty.SetRetryCount(3)
-	resty.SetLogger(log.StandardLogger().Writer())
-	resty.SetRedirectPolicy(resty.NoRedirectPolicy())
-	resty.OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
-		if response.StatusCode() >= 300 || response.StatusCode() < 200 {
-			return HTTPError{response}
-		}
-		return nil
-	})
-
-	return client
 }
 
 // Config of the client
@@ -120,17 +121,22 @@ func (c *client) Config() *Config {
 
 // FetchFileE queries the remote configuration service and returns the resulting file
 func (c *client) FetchFileE(source string) ([]byte, error) {
-	resp, err := resty.R().Get(c.formatFileURI(source))
-
-	return resp.Body(), err
+	resp, err := c.R().Get(c.formatFileURI(source))
+	if err != nil {
+		return nil, err
+	}
+	return resp.Body(), nil
 }
 
 // FetchFile queries the remote configuration service and returns the resulting file
 func (c *client) FetchFile(source string, errorHandler func([]byte, error) []byte) []byte {
-	resp, err := resty.R().Get(c.formatFileURI(source))
+	resp, err := c.R().Get(c.formatFileURI(source))
 
 	if err != nil {
-		return errorHandler(resp.Body(), err)
+		if resp != nil {
+			return errorHandler(resp.Body(), err)
+		}
+		return nil
 	}
 	return resp.Body()
 }
@@ -152,26 +158,35 @@ func (c *client) FetchAsYAML() (string, error) {
 
 // FetchAs queries the remote configuration service and returns the result in specified format
 func (c *client) FetchAs(extension Extension) (string, error) {
-	resp, err := resty.R().Get(c.formatValuesURI(extension))
-	return resp.String(), err
+	resp, err := c.R().Get(c.formatValuesURI(extension))
+	if err != nil {
+		return "", err
+	}
+	return resp.String(), nil
 }
 
 // Encrypt encrypts the value server side and returns result
 func (c *client) Encrypt(value string) (string, error) {
-	resp, err := resty.R().
+	resp, err := c.R().
 		SetHeader("Content-Type", "text/plain").
 		SetBody(value).
 		Post(encryptPath)
-	return resp.String(), err
+	if err != nil {
+		return "", err
+	}
+	return resp.String(), nil
 }
 
 // Decrypt decrypts the value server side and returns result
 func (c *client) Decrypt(value string) (string, error) {
-	resp, err := resty.R().
+	resp, err := c.R().
 		SetHeader("Content-Type", "text/plain").
 		SetBody(value).
 		Post(decryptPath)
-	return resp.String(), err
+	if err != nil {
+		return "", err
+	}
+	return resp.String(), nil
 }
 
 func (c *client) formatValuesURI(extension Extension) string {

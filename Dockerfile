@@ -1,5 +1,5 @@
 # Builder image
-FROM golang:1.12.1 AS builder
+FROM golang:1.14.3 AS builder
 
 WORKDIR /build
 COPY go.mod go.sum ./
@@ -13,7 +13,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -v -ldflags '-w -s -X 'github.com/wandera/scccmd/cmd.Version=${CACHE_TAG}
 
 # Runtime image
-FROM alpine:3.8
+FROM alpine:3.12
 RUN apk --no-cache add ca-certificates
 
 COPY --from=builder /build/scccmd /app/scccmd

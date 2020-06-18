@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dimiro1/health"
-	"github.com/howeyc/fsnotify"
+	"github.com/fsnotify/fsnotify"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -151,7 +151,7 @@ func NewWebhook(p WebhookParameters) (*Webhook, error) {
 	// symlink updates of k8s ConfigMaps volumes.
 	for _, file := range []string{p.ConfigFile, p.CertFile, p.KeyFile} {
 		watchDir, _ := filepath.Split(file)
-		if err := watcher.Watch(watchDir); err != nil {
+		if err := watcher.Add(watchDir); err != nil {
 			return nil, fmt.Errorf("could not watch %v: %v", file, err)
 		}
 	}
@@ -215,12 +215,12 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 			wh.config = config
 			wh.cert = &pair
 			wh.mu.Unlock()
-		case event := <-wh.watcher.Event:
+		case event := <-wh.watcher.Events:
 			// use a timer to debounce configuration updates
-			if event.IsModify() || event.IsCreate() {
+			if event.Op&fsnotify.Create == fsnotify.Create || event.Op&fsnotify.Write == fsnotify.Write {
 				timerC = time.After(watchDebounceDelay)
 			}
-		case err := <-wh.watcher.Error:
+		case err := <-wh.watcher.Errors:
 			log.Errorf("Watcher error: %v", err)
 		case <-healthC:
 			content := []byte(`ok`)

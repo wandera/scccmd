@@ -39,12 +39,12 @@ const (
 
 // WebhookConfigDefaults configures default init container values.
 type WebhookConfigDefaults struct {
-	ContainerName string `yaml:"container-name"`
-	Label         string `yaml:"label"`
-	Profile       string `yaml:"profile"`
-	VolumeName    string `yaml:"volume-name"`
-	VolumeMount   string `yaml:"volume-mount"`
-	Source        string `yaml:"source"`
+	ContainerName string `yaml:"container-name,omitempty"`
+	Label         string `yaml:"label,omitempty"`
+	Profile       string `yaml:"profile,omitempty"`
+	VolumeName    string `yaml:"volume-name,omitempty"`
+	VolumeMount   string `yaml:"volume-mount,omitempty"`
+	Source        string `yaml:"source,omitempty"`
 }
 
 // InitContainerResourcesList resources for init container
@@ -61,11 +61,11 @@ type InitContainerResources struct {
 
 // WebhookConfig struct representing webhook configuration values.
 type WebhookConfig struct {
-	AnnotationPrefix string                 `yaml:"annotation-prefix"`
-	Policy           InjectionPolicy        `yaml:"policy"`
-	ContainerImage   string                 `yaml:"container-image"`
-	Default          WebhookConfigDefaults  `yaml:"default"`
-	Resources        InitContainerResources `yaml:"resources"`
+	AnnotationPrefix string                 `yaml:"annotation-prefix,omitempty"`
+	Policy           InjectionPolicy        `yaml:"policy,omitempty"`
+	ContainerImage   string                 `yaml:"container-image,omitempty"`
+	Default          WebhookConfigDefaults  `yaml:"default,omitempty"`
+	Resources        InitContainerResources `yaml:"resources,omitempty"`
 }
 
 // Webhook implements a mutating webhook for automatic config injection.

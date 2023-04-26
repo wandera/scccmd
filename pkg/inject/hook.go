@@ -10,7 +10,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"io"
 	"k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -18,6 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"net/http"
+	"os"
 	"path/filepath"
 	"sync"
 	"time"
@@ -99,7 +100,7 @@ type WebhookParameters struct {
 	Port int
 }
 
-// UnmarshalYAML implements Unmarshaler interface for WebhookConfig
+// UnmarshalYAML implements Unmarshaler interface for WebhookConfig.
 func (w *WebhookConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	type rawWebhookConfig WebhookConfig
 	raw := rawWebhookConfig{
@@ -179,7 +180,7 @@ func NewWebhook(p WebhookParameters) (*Webhook, error) {
 	return wh, nil
 }
 
-// Run starts the webhook control loop
+// Run starts the webhook control loop.
 func (wh *Webhook) Run(stop <-chan struct{}) {
 	go func() {
 		if err := wh.server.ListenAndServeTLS("", ""); err != nil {
@@ -216,7 +217,7 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 			wh.cert = &pair
 			wh.mu.Unlock()
 		case event := <-wh.watcher.Events:
-			// use a timer to debounce configuration updates
+			// use a timer to debounce configuration updates.
 			if event.Op&fsnotify.Create == fsnotify.Create || event.Op&fsnotify.Write == fsnotify.Write {
 				timerC = time.After(watchDebounceDelay)
 			}
@@ -224,7 +225,7 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 			log.Errorf("Watcher error: %v", err)
 		case <-healthC:
 			content := []byte(`ok`)
-			if err := ioutil.WriteFile(wh.healthCheckFile, content, 0644); err != nil {
+			if err := os.WriteFile(wh.healthCheckFile, content, 0644); err != nil {
 				log.Errorf("Health check update of %q failed: %v", wh.healthCheckFile, err)
 			}
 		case <-stop:
@@ -236,7 +237,7 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	var body []byte
 	if r.Body != nil {
-		if data, err := ioutil.ReadAll(r.Body); err == nil {
+		if data, err := io.ReadAll(r.Body); err == nil {
 			body = data
 		}
 	}
@@ -282,7 +283,7 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Check check that webhook is up
+// Check check that webhook is up.
 func (wh *Webhook) Check() health.Health {
 	whHealth := health.NewHealth()
 	whHealth.Up()
@@ -368,7 +369,7 @@ func (wh *Webhook) getCert(*tls.ClientHelloInfo) (*tls.Certificate, error) {
 }
 
 func loadConfig(injectFile string) (*WebhookConfig, error) {
-	data, err := ioutil.ReadFile(injectFile)
+	data, err := os.ReadFile(injectFile)
 	if err != nil {
 		return nil, err
 	}

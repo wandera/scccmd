@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    tags:
+    - "v*.*.*"
+
+env:
+  REGISTRY: ghcr.io
+  BINARY_NAME: ${{ github.event.repository.name }}
+  IMAGE_NAME: ${{ github.repository }}
+  TAG: ${{ github.ref_name }}
+
+jobs:
+  release-binary:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: [386, arm64, amd64]
+        exclude:
+        - goarch: "386"
+          goos: darwin
+    steps:
+    - name: Checkout the latest code
+      uses: actions/checkout@v3
+    - name: Install Go
+      uses: actions/setup-go@v4
+      with:
+        go-version-file: go.mod
+    - name: Build ${{ matrix.goos }}/${{ matrix.goarch }}
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+      shell: bash
+      run: |
+        if [ "$GOOS" = "windows" ]; then
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/${{ env.BINARY_NAME }}.exe -ldflags '-w -s -X 'github.com/wandera/${{ env.BINARY_NAME }}/cmd.Version=${{ env.TAG }}
+        else
+          CGO_ENABLED=0 GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/${{ env.BINARY_NAME }} -ldflags '-w -s -X 'github.com/wandera/${{ env.BINARY_NAME }}/cmd.Version=${{ env.TAG }}
+        fi
+        tar -czvf ${{ env.BINARY_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz -C dist/ .
+    - name: Release
+      uses: wandera/action-gh-release@v1
+      with:
+        files: ${{ env.BINARY_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}.tar.gz
+
+  release-docker-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=semver,pattern={{raw}}
+          type=semver,pattern=v{{major}}.{{minor}}
+          type=semver,pattern=v{{major}}
+          type=sha
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Docker build & push
+      uses: docker/build-push-action@v4
+      with:
+        push: true
+        context: .
+        platforms: linux/amd64,linux/arm64
+        build-args: |
+          VERSION=${{ github.ref_name }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+

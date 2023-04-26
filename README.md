@@ -1,7 +1,6 @@
 # scccmd - Spring Cloud Config cli tool
 
-[![Build Status](https://travis-ci.org/wandera/scccmd.svg?branch=master)](https://travis-ci.org/wandera/scccmd)
-[![Docker Build Status](https://img.shields.io/docker/build/wanderadock/scccmd.svg)](https://hub.docker.com/r/wanderadock/scccmd/)
+[![Test](https://github.com/wandera/scccmd/actions/workflows/test.yml/badge.svg)](https://github.com/wandera/scccmd/actions/workflows/test.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/wandera/scccmd)](https://goreportcard.com/report/github.com/wandera/scccmd)
 [![GitHub release](https://img.shields.io/github/release/wandera/scccmd.svg)](https://github.com/wandera/scccmd/releases/latest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/wandera/scccmd/blob/master/LICENSE)
@@ -15,7 +14,7 @@ Tool for obtaining configuration from config server
 * Or if you dont want to setup your local go env just use the provided Dockerfile
 
 ### Docker repository
-The tool is released as docker image as well, check the [repository](https://hub.docker.com/r/wanderadock/scccmd/).
+The tool is released as docker image as well, check the [repository](https://github.com/wandera/git2kube/pkgs/container/scccmd).
 
 ### Kubernetes Initializer
 The tool could be used as Webhook for Kubernetes deployments. 

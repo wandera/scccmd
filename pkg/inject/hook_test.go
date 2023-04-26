@@ -5,16 +5,18 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/wandera/scccmd/internal"
-	"github.com/wandera/scccmd/internal/testcerts"
-	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"k8s.io/apimachinery/pkg/api/resource"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/wandera/scccmd/internal"
+	"github.com/wandera/scccmd/internal/testcerts"
+	"gopkg.in/yaml.v2"
+
+	"k8s.io/apimachinery/pkg/api/resource"
 
 	"github.com/onsi/gomega"
 	"k8s.io/api/admission/v1beta1"
@@ -74,8 +76,10 @@ ZOQ5UvU=
 -----END CERTIFICATE-----`)
 )
 
-const annotationPrefix = "config.scccmd.github.com/"
-const annotationInjectKey = "config.scccmd.github.com/inject"
+const (
+	annotationPrefix    = "config.scccmd.github.com/"
+	annotationInjectKey = "config.scccmd.github.com/inject"
+)
 
 func TestInjectRequired(t *testing.T) {
 	podSpec := &corev1.PodSpec{}
@@ -271,24 +275,25 @@ func createWebhook(t testing.TB) (*Webhook, func()) {
 		port       = 0
 	)
 
-	if err := ioutil.WriteFile(configFile, configBytes, 0644); err != nil { // nolint: vetshadow
+	if err := ioutil.WriteFile(configFile, configBytes, 0o644); err != nil { // nolint: vetshadow
 		cleanup()
 		t.Fatalf("WriteFile(%v) failed: %v", configFile, err)
 	}
 
 	// cert
-	if err := ioutil.WriteFile(certFile, testcerts.ServerCert, 0644); err != nil { // nolint: vetshadow
+	if err := ioutil.WriteFile(certFile, testcerts.ServerCert, 0o644); err != nil { // nolint: vetshadow
 		cleanup()
 		t.Fatalf("WriteFile(%v) failed: %v", certFile, err)
 	}
 	// key
-	if err := ioutil.WriteFile(keyFile, testcerts.ServerKey, 0644); err != nil { // nolint: vetshadow
+	if err := ioutil.WriteFile(keyFile, testcerts.ServerKey, 0o644); err != nil { // nolint: vetshadow
 		cleanup()
 		t.Fatalf("WriteFile(%v) failed: %v", keyFile, err)
 	}
 
 	wh, err := NewWebhook(WebhookParameters{
-		ConfigFile: configFile, CertFile: certFile, KeyFile: keyFile, Port: port})
+		ConfigFile: configFile, CertFile: certFile, KeyFile: keyFile, Port: port,
+	})
 	if err != nil {
 		cleanup()
 		t.Fatalf("NewWebhook() failed: %v", err)
@@ -464,11 +469,11 @@ func TestReloadCert(t *testing.T) {
 	go wh.Run(stop)
 	checkCert(t, wh, testcerts.ServerCert, testcerts.ServerKey)
 	// Update cert/key files.
-	if err := ioutil.WriteFile(wh.certFile, rotatedCert, 0644); err != nil { // nolint: vetshadow
+	if err := ioutil.WriteFile(wh.certFile, rotatedCert, 0o644); err != nil { // nolint: vetshadow
 		cleanup()
 		t.Fatalf("WriteFile(%v) failed: %v", wh.certFile, err)
 	}
-	if err := ioutil.WriteFile(wh.keyFile, rotatedKey, 0644); err != nil { // nolint: vetshadow
+	if err := ioutil.WriteFile(wh.keyFile, rotatedKey, 0o644); err != nil { // nolint: vetshadow
 		cleanup()
 		t.Fatalf("WriteFile(%v) failed: %v", wh.keyFile, err)
 	}

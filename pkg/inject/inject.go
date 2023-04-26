@@ -3,12 +3,13 @@ package inject
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	log "github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"strings"
 )
 
 // InjectionPolicy determines the policy for injecting the
@@ -81,7 +82,6 @@ func injectionStatus(pod *corev1.Pod, annotationStatusKey string) *SidecarInject
 func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *WebhookConfig) (*SidecarInjectionSpec, string, error) { // nolint: lll
 
 	d, err := calculateDynamicConfig(config, metadata.GetAnnotations(), spec)
-
 	if err != nil {
 		return nil, "", err
 	}
@@ -227,7 +227,7 @@ func calculateImageArgs(c *WebhookConfig, a map[string]string, podSpec *corev1.P
 }
 
 func calculateDynamicConfig(c *WebhookConfig, a map[string]string, podSpec *corev1.PodSpec) (*dynamicConfig, error) {
-	var d = dynamicConfig{}
+	d := dynamicConfig{}
 	var ok bool
 
 	if d.containerName, ok = a[c.AnnotationPrefix+"container-name"]; !ok {

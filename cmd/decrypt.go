@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"github.com/wandera/scccmd/pkg/client"
 	"io/ioutil"
 	"os"
+
+	"github.com/spf13/cobra"
+	"github.com/wandera/scccmd/pkg/client"
 )
 
 var dp = struct {

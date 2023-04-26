@@ -5,8 +5,10 @@ import (
 	"strings"
 )
 
-const mappingSeparator = ","
-const sourceDestSeparator = ":"
+const (
+	mappingSeparator    = ","
+	sourceDestSeparator = ":"
+)
 
 // FileMapping single file mapping source:dest
 type FileMapping struct {

@@ -3,14 +3,15 @@ package client
 import (
 	"bytes"
 	"fmt"
-	"github.com/wandera/scccmd/internal"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/wandera/scccmd/internal"
 )
 
 func TestNewClient(t *testing.T) {
-	var tp = struct {
+	tp := struct {
 		application string
 		profile     string
 		label       string
@@ -36,7 +37,7 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestErrorResponse(t *testing.T) {
-	var tp = struct {
+	tp := struct {
 		application string
 		profile     string
 		label       string
@@ -71,7 +72,7 @@ func TestErrorResponse(t *testing.T) {
 }
 
 func TestRedirectResponse(t *testing.T) {
-	var tp = struct {
+	tp := struct {
 		application string
 		profile     string
 		label       string
@@ -107,7 +108,7 @@ func TestRedirectResponse(t *testing.T) {
 }
 
 func Test503Response(t *testing.T) {
-	var tp = struct {
+	tp := struct {
 		application string
 		profile     string
 		label       string
@@ -142,7 +143,7 @@ func Test503Response(t *testing.T) {
 }
 
 func TestClient_FetchFile(t *testing.T) {
-	var tp = struct {
+	tp := struct {
 		application string
 		profile     string
 		label       string
@@ -170,7 +171,6 @@ func TestClient_FetchFile(t *testing.T) {
 		Profile:     tp.profile,
 		Label:       tp.label,
 	}).FetchFileE(tp.fileName)
-
 	if err != nil {
 		t.Error("FetchFile failed with: ", err)
 	}
@@ -179,7 +179,7 @@ func TestClient_FetchFile(t *testing.T) {
 }
 
 func TestClient_FetchAsYAML(t *testing.T) {
-	var tp = struct {
+	tp := struct {
 		application string
 		profile     string
 		label       string
@@ -207,7 +207,6 @@ func TestClient_FetchAsYAML(t *testing.T) {
 		Profile:     tp.profile,
 		Label:       tp.label,
 	}).FetchAsYAML()
-
 	if err != nil {
 		t.Error("FetchFile failed with: ", err)
 	}
@@ -216,7 +215,7 @@ func TestClient_FetchAsYAML(t *testing.T) {
 }
 
 func TestClient_Encrypt(t *testing.T) {
-	var tp = struct {
+	tp := struct {
 		URI         string
 		testContent string
 	}{
@@ -239,7 +238,6 @@ func TestClient_Encrypt(t *testing.T) {
 	cont, err := NewClient(Config{
 		URI: ts.URL,
 	}).Encrypt(tp.testContent)
-
 	if err != nil {
 		t.Error("Encrypt failed with: ", err)
 	}
@@ -248,7 +246,7 @@ func TestClient_Encrypt(t *testing.T) {
 }
 
 func TestClient_Decrypt(t *testing.T) {
-	var tp = struct {
+	tp := struct {
 		URI         string
 		testContent string
 	}{
@@ -271,7 +269,6 @@ func TestClient_Decrypt(t *testing.T) {
 	cont, err := NewClient(Config{
 		URI: ts.URL,
 	}).Decrypt(tp.testContent)
-
 	if err != nil {
 		t.Error("Decrypt failed with: ", err)
 	}

@@ -6,22 +6,24 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
+	"sync"
+	"time"
+
 	"github.com/dimiro1/health"
 	"github.com/fsnotify/fsnotify"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	"io"
+
 	"k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
-	"net/http"
-	"os"
-	"path/filepath"
-	"sync"
-	"time"
 )
 
 var (
@@ -225,7 +227,7 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 			log.Errorf("Watcher error: %v", err)
 		case <-healthC:
 			content := []byte(`ok`)
-			if err := os.WriteFile(wh.healthCheckFile, content, 0644); err != nil {
+			if err := os.WriteFile(wh.healthCheckFile, content, 0o644); err != nil {
 				log.Errorf("Health check update of %q failed: %v", wh.healthCheckFile, err)
 			}
 		case <-stop:

@@ -3,8 +3,9 @@ package inject
 import (
 	"encoding/json"
 	"fmt"
-	corev1 "k8s.io/api/core/v1"
 	"strings"
+
+	corev1 "k8s.io/api/core/v1"
 )
 
 type rfc6902PatchOperation struct {

@@ -2,9 +2,10 @@ package client
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
-	"strings"
 )
 
 // Extension format of downloaded config
@@ -131,7 +132,6 @@ func (c *client) FetchFileE(source string) ([]byte, error) {
 // FetchFile queries the remote configuration service and returns the resulting file
 func (c *client) FetchFile(source string, errorHandler func([]byte, error) []byte) []byte {
 	resp, err := c.R().Get(c.formatFileURI(source))
-
 	if err != nil {
 		if resp != nil {
 			return errorHandler(resp.Body(), err)

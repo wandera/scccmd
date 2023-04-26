@@ -58,7 +58,7 @@ func validateDiffParams(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-// ExecuteDiffValues runs diff values cmd
+// ExecuteDiffValues runs diff values cmd.
 func ExecuteDiffValues() error {
 	ext, err := client.ParseExtension(diffp.format)
 	if err != nil {
@@ -94,7 +94,7 @@ func ExecuteDiffValues() error {
 	return difflib.WriteUnifiedDiff(os.Stdout, d)
 }
 
-// ExecuteDiffFiles runs diff files cmd
+// ExecuteDiffFiles runs diff files cmd.
 func ExecuteDiffFiles() error {
 	errorHandler := func(data []byte, err error) []byte {
 		if e, ok := err.(client.HTTPError); ok && e.StatusCode() == http.StatusNotFound {

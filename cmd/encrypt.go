@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -22,10 +22,10 @@ var encryptCmd = &cobra.Command{
 	},
 }
 
-// ExecuteEncrypt runs encrypt cmd
+// ExecuteEncrypt runs encrypt cmd.
 func ExecuteEncrypt() error {
 	if ep.value == "" {
-		bytes, err := ioutil.ReadAll(os.Stdin)
+		bytes, err := io.ReadAll(os.Stdin)
 
 		ep.value = string(bytes)
 		if err != nil {

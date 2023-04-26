@@ -17,7 +17,6 @@ import (
 	"github.com/fsnotify/fsnotify"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-
 	"k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -50,13 +49,13 @@ type WebhookConfigDefaults struct {
 	Source        string `yaml:"source,omitempty"`
 }
 
-// InitContainerResourcesList resources for init container
+// InitContainerResourcesList resources for init container.
 type InitContainerResourcesList struct {
 	CPU    string `yaml:"cpu"`
 	Memory string `yaml:"memory"`
 }
 
-// InitContainerResources resources for init container
+// InitContainerResources resources for init container.
 type InitContainerResources struct {
 	Requests InitContainerResourcesList `yaml:"requests"`
 	Limits   InitContainerResourcesList `yaml:"limits"`
@@ -161,7 +160,8 @@ func NewWebhook(p WebhookParameters) (*Webhook, error) {
 
 	wh := &Webhook{
 		server: &http.Server{
-			Addr: fmt.Sprintf(":%v", p.Port),
+			Addr:              fmt.Sprintf(":%v", p.Port),
+			ReadHeaderTimeout: time.Minute,
 		},
 		config:     config,
 		configFile: p.ConfigFile,
@@ -171,7 +171,7 @@ func NewWebhook(p WebhookParameters) (*Webhook, error) {
 		cert:       &pair,
 	}
 	// mtls disabled because apiserver webhook cert usage is still TBD.
-	wh.server.TLSConfig = &tls.Config{GetCertificate: wh.getCert}
+	wh.server.TLSConfig = &tls.Config{GetCertificate: wh.getCert, MinVersion: tls.VersionTLS12}
 	h := http.NewServeMux()
 	healthHandler := health.NewHandler()
 	healthHandler.AddChecker("webhook", wh)
@@ -227,7 +227,7 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 			log.Errorf("Watcher error: %v", err)
 		case <-healthC:
 			content := []byte(`ok`)
-			if err := os.WriteFile(wh.healthCheckFile, content, 0o644); err != nil {
+			if err := os.WriteFile(wh.healthCheckFile, content, 0o600); err != nil {
 				log.Errorf("Health check update of %q failed: %v", wh.healthCheckFile, err)
 			}
 		case <-stop:

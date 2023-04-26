@@ -3,10 +3,11 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"github.com/wandera/scccmd/internal/testutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/wandera/scccmd/internal/testutil"
 )
 
 func TestExecuteDecrypt(t *testing.T) {

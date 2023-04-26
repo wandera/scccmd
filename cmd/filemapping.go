@@ -10,7 +10,7 @@ const (
 	sourceDestSeparator = ":"
 )
 
-// FileMapping single file mapping source:dest
+// FileMapping single file mapping source:dest.
 type FileMapping struct {
 	source      string
 	destination string
@@ -25,7 +25,7 @@ func (m *FileMappings) String() string {
 	return ""
 }
 
-// Set parse mappings from string
+// Set parse mappings from string.
 func (m *FileMappings) Set(value string) error {
 	mappings := strings.Split(value, mappingSeparator)
 
@@ -43,17 +43,17 @@ func (m *FileMappings) Set(value string) error {
 	return nil
 }
 
-// Type type name (for cobra)
+// Type type name (for cobra).
 func (m *FileMappings) Type() string {
 	return "FileMappings"
 }
 
-// Mappings all mappings
+// Mappings all mappings.
 func (m *FileMappings) Mappings() []FileMapping {
 	return m.mappings
 }
 
-// Sources all sources
+// Sources all sources.
 func (m *FileMappings) Sources() []string {
 	sources := make([]string, len(m.mappings))
 	for i, mapping := range m.mappings {
@@ -63,7 +63,7 @@ func (m *FileMappings) Sources() []string {
 	return sources
 }
 
-// Destinations all destinations
+// Destinations all destinations.
 func (m *FileMappings) Destinations() []string {
 	destinations := make([]string, len(m.mappings))
 	for i, mapping := range m.mappings {

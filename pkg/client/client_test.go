@@ -126,7 +126,6 @@ func Test503Response(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 		w.WriteHeader(503)
-		return
 	}))
 	defer ts.Close()
 

@@ -42,7 +42,7 @@ var getFilesCmd = &cobra.Command{
 	},
 }
 
-// ExecuteGetValues runs get values cmd
+// ExecuteGetValues runs get values cmd.
 func ExecuteGetValues() error {
 	ext, err := client.ParseExtension(gp.format)
 	if err != nil {
@@ -60,12 +60,11 @@ func ExecuteGetValues() error {
 		log.Debug("Config server response:")
 		log.Debug(resp)
 
-		if err = os.WriteFile(gp.destination, []byte(resp), 0o644); err != nil {
+		if err = os.WriteFile(gp.destination, []byte(resp), 0o600); err != nil {
 			return err
 		}
 
 		log.Debug("Response written to: ", gp.destination)
-
 	} else {
 		fmt.Print(resp)
 	}
@@ -73,7 +72,7 @@ func ExecuteGetValues() error {
 	return nil
 }
 
-// ExecuteGetFiles runs get files cmd
+// ExecuteGetFiles runs get files cmd.
 func ExecuteGetFiles() error {
 	for _, mapping := range gp.fileMappings.Mappings() {
 		resp, err := client.
@@ -91,7 +90,7 @@ func ExecuteGetFiles() error {
 			fmt.Println()
 			log.Debug("Response written to stdout")
 		} else {
-			if err = os.WriteFile(mapping.destination, resp, 0o644); err != nil {
+			if err = os.WriteFile(mapping.destination, resp, 0o600); err != nil {
 				return err
 			}
 

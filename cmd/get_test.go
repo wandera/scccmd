@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -102,7 +101,7 @@ func TestExecuteGetFiles(t *testing.T) {
 				t.Error("Execute failed with: ", err)
 			}
 
-			raw, err := ioutil.ReadFile(filename)
+			raw, err := os.ReadFile(filename)
 			defer os.Remove(filename)
 			if err != nil {
 				t.Error("Expected to download file: ", err)
@@ -176,7 +175,7 @@ func TestExecuteGetValues(t *testing.T) {
 				t.Error("Execute failed with: ", err)
 			}
 
-			raw, err := ioutil.ReadFile(tp.destFileName)
+			raw, err := os.ReadFile(tp.destFileName)
 			defer os.Remove(tp.destFileName)
 			if err != nil {
 				t.Error("Expected to download file: ", err)

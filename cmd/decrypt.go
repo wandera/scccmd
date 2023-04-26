@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -22,10 +22,10 @@ var decryptCmd = &cobra.Command{
 	},
 }
 
-// ExecuteDecrypt runs decrypt cmd
+// ExecuteDecrypt runs decrypt cmd.
 func ExecuteDecrypt() error {
 	if dp.value == "" {
-		bytes, err := ioutil.ReadAll(os.Stdin)
+		bytes, err := io.ReadAll(os.Stdin)
 
 		dp.value = string(bytes)
 		if err != nil {

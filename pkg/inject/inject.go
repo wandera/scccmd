@@ -26,7 +26,7 @@ type SidecarInjectionStatus struct {
 }
 
 // SidecarInjectionSpec collects all container types and volumes for
-// sidecar mesh injection
+// sidecar mesh injection.
 type SidecarInjectionSpec struct {
 	InitContainers []v1.Container   `yaml:"initContainers"`
 	VolumeMounts   []v1.VolumeMount `yaml:"volumeMounts"`
@@ -56,7 +56,7 @@ const (
 	InjectionPolicyEnabled InjectionPolicy = "enabled"
 )
 
-// InjectionStatus extracts the injection status from the pod
+// InjectionStatus extracts the injection status from the pod.
 func injectionStatus(pod *corev1.Pod, annotationStatusKey string) *SidecarInjectionStatus {
 	var statusBytes []byte
 	if pod.ObjectMeta.Annotations != nil {
@@ -80,7 +80,6 @@ func injectionStatus(pod *corev1.Pod, annotationStatusKey string) *SidecarInject
 }
 
 func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *WebhookConfig) (*SidecarInjectionSpec, string, error) { // nolint: lll
-
 	d, err := calculateDynamicConfig(config, metadata.GetAnnotations(), spec)
 	if err != nil {
 		return nil, "", err

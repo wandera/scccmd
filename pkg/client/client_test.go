@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/wandera/scccmd/internal"
+	"github.com/wandera/scccmd/internal/testutil"
 )
 
 func TestNewClient(t *testing.T) {

@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"github.com/wandera/scccmd/internal/testutil"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -12,7 +13,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/wandera/scccmd/internal"
 	"github.com/wandera/scccmd/internal/testcerts"
 	"gopkg.in/yaml.v2"
 

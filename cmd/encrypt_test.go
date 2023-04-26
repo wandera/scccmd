@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"fmt"
+	"github.com/wandera/scccmd/internal/testutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -18,13 +19,13 @@ func TestExecuteEncrypt(t *testing.T) {
 	}
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assertString(t, "Incorrect Method", "POST", r.Method)
-		assertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
+		testutil.AssertString(t, "Incorrect Method", "POST", r.Method)
+		testutil.AssertString(t, "Incorrect URI call", tp.URI, r.RequestURI)
 
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(r.Body)
 
-		assertString(t, "Incorrect Content received", tp.testContent, buf.String())
+		testutil.AssertString(t, "Incorrect Content received", tp.testContent, buf.String())
 		fmt.Fprintln(w, tp.testContent)
 	}))
 	defer ts.Close()

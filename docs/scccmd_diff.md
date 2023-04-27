@@ -21,7 +21,7 @@ Diff the config from the given config server
 ### Options inherited from parent commands
 
 ```
-      --log-level string   command log level (options: [panic fatal error warning info debug trace]) (default "info")
+      --log-level string   command log level (options: [panic fatal error warning info debug]) (default "info")
 ```
 
 ### SEE ALSO

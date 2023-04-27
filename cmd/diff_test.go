@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -11,7 +10,7 @@ import (
 )
 
 func TestExecuteDiffFiles(t *testing.T) {
-	var testParams = []struct {
+	testParams := []struct {
 		appName       string
 		fileName      string
 		difftext      string
@@ -26,7 +25,8 @@ func TestExecuteDiffFiles(t *testing.T) {
 		labelB        string
 		requestURIB   string
 	}{
-		{"app",
+		{
+			"app",
 			"src",
 			"diff a/src b/src\n--- a/src profile=default label=master\n+++ b/src profile=default label=develop\n@@ -1,3 +1,3 @@\n foo\n-bar\n+baz\n ",
 			"foo\nbar",
@@ -40,7 +40,8 @@ func TestExecuteDiffFiles(t *testing.T) {
 			"develop",
 			"/app/default/develop/src",
 		},
-		{"app",
+		{
+			"app",
 			"src",
 			"diff a/src b/src\n--- a/src profile=development label=master\n+++ b/src profile=qa label=master\n@@ -1,3 +1,3 @@\n foo\n-bar\n+baz\n ",
 			"foo\nbar",
@@ -54,7 +55,8 @@ func TestExecuteDiffFiles(t *testing.T) {
 			"master",
 			"/app/qa/master/src",
 		},
-		{"app",
+		{
+			"app",
 			"src",
 			"",
 			"foo\nbar",
@@ -68,7 +70,8 @@ func TestExecuteDiffFiles(t *testing.T) {
 			"develop",
 			"/app/default/develop/src",
 		},
-		{"app",
+		{
+			"app",
 			"src",
 			"",
 			"foo\nbar",
@@ -82,7 +85,8 @@ func TestExecuteDiffFiles(t *testing.T) {
 			"master",
 			"/app/default/master/src",
 		},
-		{"app",
+		{
+			"app",
 			"src",
 			"diff a/src b/src\n--- a/src profile=default label=master\n+++ b/src profile=default label=develop\n@@ -1,3 +1 @@\n-foo\n-bar\n ",
 			"foo\nbar",
@@ -96,7 +100,8 @@ func TestExecuteDiffFiles(t *testing.T) {
 			"develop",
 			"/app/default/develop/src",
 		},
-		{"app",
+		{
+			"app",
 			"src",
 			"diff a/src b/src\n--- a/src profile=default label=master\n+++ b/src profile=default label=develop\n@@ -1 +1,3 @@\n+foo\n+bar\n ",
 			"error",
@@ -110,7 +115,8 @@ func TestExecuteDiffFiles(t *testing.T) {
 			"develop",
 			"/app/default/develop/src",
 		},
-		{"app",
+		{
+			"app",
 			"src",
 			"",
 			"error",
@@ -162,7 +168,7 @@ func TestExecuteDiffFiles(t *testing.T) {
 				t.Error("Execute failed with: ", err)
 			}
 
-			raw, err := ioutil.ReadFile(filename)
+			raw, err := os.ReadFile(filename)
 			defer os.Remove(filename)
 			if err != nil {
 				t.Error("Expected to download file: ", err)
@@ -176,7 +182,7 @@ func TestExecuteDiffFiles(t *testing.T) {
 }
 
 func TestExecuteDiffValues(t *testing.T) {
-	var testParams = []struct {
+	testParams := []struct {
 		appName      string
 		difftext     string
 		testContentA string
@@ -189,7 +195,8 @@ func TestExecuteDiffValues(t *testing.T) {
 		requestURIB  string
 		format       string
 	}{
-		{"app",
+		{
+			"app",
 			"@@ -1,2 +1,2 @@\n foo: 1\n-bar: 2\n+baz: 2",
 			"foo: 1\nbar: 2",
 			"default",
@@ -201,7 +208,8 @@ func TestExecuteDiffValues(t *testing.T) {
 			"/develop/app-default.yml",
 			"yaml",
 		},
-		{"app",
+		{
+			"app",
 			"",
 			"foo=bar",
 			"default",
@@ -213,7 +221,8 @@ func TestExecuteDiffValues(t *testing.T) {
 			"/develop/app-default.properties",
 			"properties",
 		},
-		{"app",
+		{
+			"app",
 			"@@ -1 +1 @@\n-{\"foo\":\"bar\", \"foo\":\"bar\"}\n+{\"foo\":\"bar\", \"foo\":\"baz\"}",
 			"{\"foo\":\"bar\", \"foo\":\"bar\"}",
 			"qa",
@@ -261,7 +270,7 @@ func TestExecuteDiffValues(t *testing.T) {
 				t.Error("Execute failed with: ", err)
 			}
 
-			raw, err := ioutil.ReadFile(filename)
+			raw, err := os.ReadFile(filename)
 			defer os.Remove(filename)
 			if err != nil {
 				t.Error("Expected to download file: ", err)
@@ -272,5 +281,4 @@ func TestExecuteDiffValues(t *testing.T) {
 			}
 		}()
 	}
-
 }

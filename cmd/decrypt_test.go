@@ -3,14 +3,15 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"github.com/wandera/scccmd/internal"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/wandera/scccmd/internal/testutil"
 )
 
 func TestExecuteDecrypt(t *testing.T) {
-	var tp = struct {
+	tp := struct {
 		URI         string
 		testContent string
 	}{
@@ -33,14 +34,13 @@ func TestExecuteDecrypt(t *testing.T) {
 	dp.source = ts.URL
 	dp.value = tp.testContent
 	err := ExecuteDecrypt()
-
 	if err != nil {
 		t.Error("Decrypt failed with: ", err)
 	}
 }
 
 func ExampleExecuteDecrypt() {
-	var tp = struct {
+	tp := struct {
 		URI         string
 		testContent string
 	}{

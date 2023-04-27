@@ -2,13 +2,14 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
+	"os"
+	"strings"
+
 	"github.com/pmezard/go-difflib/difflib"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/wandera/scccmd/pkg/client"
-	"net/http"
-	"os"
-	"strings"
 )
 
 var diffp = struct {
@@ -57,10 +58,9 @@ func validateDiffParams(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-// ExecuteDiffValues runs diff values cmd
+// ExecuteDiffValues runs diff values cmd.
 func ExecuteDiffValues() error {
 	ext, err := client.ParseExtension(diffp.format)
-
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,6 @@ func ExecuteDiffValues() error {
 	respA, err := client.
 		NewClient(client.Config{URI: diffp.source, Profile: diffp.profile, Application: diffp.application, Label: diffp.label}).
 		FetchAs(ext)
-
 	if err != nil {
 		return err
 	}
@@ -79,7 +78,6 @@ func ExecuteDiffValues() error {
 	respB, err := client.
 		NewClient(client.Config{URI: diffp.source, Profile: diffp.targetProfile, Application: diffp.application, Label: diffp.targetLabel}).
 		FetchAs(ext)
-
 	if err != nil {
 		return err
 	}
@@ -96,7 +94,7 @@ func ExecuteDiffValues() error {
 	return difflib.WriteUnifiedDiff(os.Stdout, d)
 }
 
-// ExecuteDiffFiles runs diff files cmd
+// ExecuteDiffFiles runs diff files cmd.
 func ExecuteDiffFiles() error {
 	errorHandler := func(data []byte, err error) []byte {
 		if e, ok := err.(client.HTTPError); ok && e.StatusCode() == http.StatusNotFound {
@@ -138,7 +136,6 @@ func ExecuteDiffFiles() error {
 		}
 
 		diffString, err := difflib.GetUnifiedDiffString(d)
-
 		if err != nil {
 			return err
 		}

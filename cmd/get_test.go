@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -18,7 +17,7 @@ func TestNoArgGetExecute(t *testing.T) {
 }
 
 func TestExecuteGetFiles(t *testing.T) {
-	var testParams = []struct {
+	testParams := []struct {
 		testContent  string
 		appName      string
 		profile      string
@@ -27,34 +26,42 @@ func TestExecuteGetFiles(t *testing.T) {
 		destFileName string
 		requestURI   string
 	}{
-		{"{\"foo\":\"bar\"}",
+		{
+			"{\"foo\":\"bar\"}",
 			"app",
 			"default",
 			"master",
 			"src",
 			"dest",
-			"/app/default/master/src"},
-		{"{\"bar\":\"foo\"}",
+			"/app/default/master/src",
+		},
+		{
+			"{\"bar\":\"foo\"}",
 			"app2",
 			"default",
 			"master",
 			"src2",
 			"destination",
-			"/app2/default/master/src2"},
-		{"{\"foo\":\"bar\"}",
+			"/app2/default/master/src2",
+		},
+		{
+			"{\"foo\":\"bar\"}",
 			"app",
 			"prod",
 			"1.0.0",
 			"app.yaml",
 			"config.yaml",
-			"/app/prod/1.0.0/app.yaml"},
-		{"{\"foo\":\"bar\"}",
+			"/app/prod/1.0.0/app.yaml",
+		},
+		{
+			"{\"foo\":\"bar\"}",
 			"app",
 			"default",
 			"master",
 			"src",
 			"-",
-			"/app/default/master/src"},
+			"/app/default/master/src",
+		},
 	}
 
 	for _, tp := range testParams {
@@ -94,7 +101,7 @@ func TestExecuteGetFiles(t *testing.T) {
 				t.Error("Execute failed with: ", err)
 			}
 
-			raw, err := ioutil.ReadFile(filename)
+			raw, err := os.ReadFile(filename)
 			defer os.Remove(filename)
 			if err != nil {
 				t.Error("Expected to download file: ", err)
@@ -108,7 +115,7 @@ func TestExecuteGetFiles(t *testing.T) {
 }
 
 func TestExecuteGetValues(t *testing.T) {
-	var testParams = []struct {
+	testParams := []struct {
 		testContent  string
 		appName      string
 		profile      string
@@ -117,27 +124,33 @@ func TestExecuteGetValues(t *testing.T) {
 		requestURI   string
 		format       string
 	}{
-		{"{\"foo\":\"bar\"}",
+		{
+			"{\"foo\":\"bar\"}",
 			"app",
 			"default",
 			"master",
 			"dest",
 			"/master/app-default.json",
-			"json"},
-		{"bar=foo",
+			"json",
+		},
+		{
+			"bar=foo",
 			"app2",
 			"default",
 			"master",
 			"destination",
 			"/master/app2-default.properties",
-			"properties"},
-		{"\"foo\":\"bar\"",
+			"properties",
+		},
+		{
+			"\"foo\":\"bar\"",
 			"app",
 			"prod",
 			"1.0.0",
 			"config.yaml",
 			"/1.0.0/app-prod.yml",
-			"yaml"},
+			"yaml",
+		},
 	}
 
 	for _, tp := range testParams {
@@ -162,7 +175,7 @@ func TestExecuteGetValues(t *testing.T) {
 				t.Error("Execute failed with: ", err)
 			}
 
-			raw, err := ioutil.ReadFile(tp.destFileName)
+			raw, err := os.ReadFile(tp.destFileName)
 			defer os.Remove(tp.destFileName)
 			if err != nil {
 				t.Error("Expected to download file: ", err)
@@ -173,5 +186,4 @@ func TestExecuteGetValues(t *testing.T) {
 			}
 		}()
 	}
-
 }

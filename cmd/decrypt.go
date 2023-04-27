@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"io"
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/wandera/scccmd/pkg/client"
-	"io/ioutil"
-	"os"
 )
 
 var dp = struct {
@@ -21,10 +22,10 @@ var decryptCmd = &cobra.Command{
 	},
 }
 
-// ExecuteDecrypt runs decrypt cmd
+// ExecuteDecrypt runs decrypt cmd.
 func ExecuteDecrypt() error {
 	if dp.value == "" {
-		bytes, err := ioutil.ReadAll(os.Stdin)
+		bytes, err := io.ReadAll(os.Stdin)
 
 		dp.value = string(bytes)
 		if err != nil {

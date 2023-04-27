@@ -13,17 +13,17 @@ scccmd webhook [flags]
 ### Options
 
 ```
-  -c, --cert-file string     location of public part of SSL certificate (default "keys/publickey.cer")
-  -f, --config-file string   the configuration file (default "config/config.yaml")
+  -c, --cert-file string     Location of public part of SSL certificate (default "keys/publickey.cer")
+  -f, --config-file string   The configuration namespace (default "config/config.yaml")
   -h, --help                 help for webhook
-  -k, --key-file string      location of private key of SSL certificate (default "keys/private.key")
-  -p, --port int             webhook port (default 443)
+  -k, --key-file string      Location of private key of SSL certificate (default "keys/private.key")
+  -p, --port int             Webhook port (default 443)
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --log-level string   command log level (options: [panic fatal error warning info debug trace]) (default "info")
+      --log-level string   command log level (options: [panic fatal error warning info debug]) (default "info")
 ```
 
 ### SEE ALSO

@@ -8,7 +8,6 @@ func Test0FileMapping(t *testing.T) {
 	if mapping.source != "" || mapping.destination != "" {
 		t.Error("Mapping does not initialize on empty values")
 	}
-
 }
 
 func TestFileMapping(t *testing.T) {

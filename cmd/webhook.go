@@ -1,12 +1,13 @@
 package cmd
 
 import (
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
-	"github.com/wandera/scccmd/pkg/inject"
 	"os"
 	"os/signal"
 	"syscall"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"github.com/wandera/scccmd/pkg/inject"
 )
 
 var wp = struct {

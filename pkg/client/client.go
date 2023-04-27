@@ -2,15 +2,16 @@ package client
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
-	"strings"
 )
 
-// Extension format of downloaded config
+// Extension format of downloaded config.
 type Extension string
 
-// ParseExtension parse string into Extension type
+// ParseExtension parse string into Extension type.
 func ParseExtension(str string) (Extension, error) {
 	switch value := strings.TrimRight(str, "\n"); value {
 	case "json":
@@ -40,7 +41,7 @@ const (
 	unknown    Extension = "_"
 )
 
-// Client Spring Cloud Config Client
+// Client Spring Cloud Config Client.
 type Client interface {
 	// Config of the client
 	Config() *Config
@@ -71,7 +72,7 @@ type Client interface {
 	Decrypt(value string) (string, error)
 }
 
-// Config needed to fetch a remote configuration
+// Config needed to fetch a remote configuration.
 type Config struct {
 	URI         string
 	Profile     string
@@ -84,17 +85,17 @@ type client struct {
 	*resty.Client
 }
 
-// HTTPError used for wrapping an exception returned from Client
+// HTTPError used for wrapping an exception returned from Client.
 type HTTPError struct {
 	*resty.Response
 }
 
-// Error is an implementation of error type interface method
+// Error is an implementation of error type interface method.
 func (e HTTPError) Error() string {
 	return fmt.Sprintf("unexpected response %d %v", e.StatusCode(), string(e.Body()))
 }
 
-// NewClient creates instance of the Client
+// NewClient creates instance of the Client.
 func NewClient(c Config) Client {
 	r := resty.New().
 		SetHostURL(c.URI).
@@ -114,12 +115,12 @@ func NewClient(c Config) Client {
 	}
 }
 
-// Config of the client
+// Config of the client.
 func (c *client) Config() *Config {
 	return c.config
 }
 
-// FetchFileE queries the remote configuration service and returns the resulting file
+// FetchFileE queries the remote configuration service and returns the resulting file.
 func (c *client) FetchFileE(source string) ([]byte, error) {
 	resp, err := c.R().Get(c.formatFileURI(source))
 	if err != nil {
@@ -128,10 +129,9 @@ func (c *client) FetchFileE(source string) ([]byte, error) {
 	return resp.Body(), nil
 }
 
-// FetchFile queries the remote configuration service and returns the resulting file
+// FetchFile queries the remote configuration service and returns the resulting file.
 func (c *client) FetchFile(source string, errorHandler func([]byte, error) []byte) []byte {
 	resp, err := c.R().Get(c.formatFileURI(source))
-
 	if err != nil {
 		if resp != nil {
 			return errorHandler(resp.Body(), err)
@@ -141,22 +141,22 @@ func (c *client) FetchFile(source string, errorHandler func([]byte, error) []byt
 	return resp.Body()
 }
 
-// FetchAsProperties queries the remote configuration service and returns the result as a Properties string
+// FetchAsProperties queries the remote configuration service and returns the result as a Properties string.
 func (c *client) FetchAsProperties() (string, error) {
 	return c.FetchAs(properties)
 }
 
-// FetchAsJSON queries the remote configuration service and returns the result as a JSON string
+// FetchAsJSON queries the remote configuration service and returns the result as a JSON string.
 func (c *client) FetchAsJSON() (string, error) {
 	return c.FetchAs(json)
 }
 
-// FetchAsYAML queries the remote configuration service and returns the result as a YAML string
+// FetchAsYAML queries the remote configuration service and returns the result as a YAML string.
 func (c *client) FetchAsYAML() (string, error) {
 	return c.FetchAs(yaml)
 }
 
-// FetchAs queries the remote configuration service and returns the result in specified format
+// FetchAs queries the remote configuration service and returns the result in specified format.
 func (c *client) FetchAs(extension Extension) (string, error) {
 	resp, err := c.R().Get(c.formatValuesURI(extension))
 	if err != nil {
@@ -165,7 +165,7 @@ func (c *client) FetchAs(extension Extension) (string, error) {
 	return resp.String(), nil
 }
 
-// Encrypt encrypts the value server side and returns result
+// Encrypt encrypts the value server side and returns result.
 func (c *client) Encrypt(value string) (string, error) {
 	resp, err := c.R().
 		SetHeader("Content-Type", "text/plain").
@@ -177,7 +177,7 @@ func (c *client) Encrypt(value string) (string, error) {
 	return resp.String(), nil
 }
 
-// Decrypt decrypts the value server side and returns result
+// Decrypt decrypts the value server side and returns result.
 func (c *client) Decrypt(value string) (string, error) {
 	resp, err := c.R().
 		SetHeader("Content-Type", "text/plain").

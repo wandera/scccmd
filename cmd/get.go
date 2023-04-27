@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/wandera/scccmd/pkg/client"
-	"io/ioutil"
-	"os"
 )
 
 const stdoutPlaceholder = "-"
@@ -42,10 +42,9 @@ var getFilesCmd = &cobra.Command{
 	},
 }
 
-// ExecuteGetValues runs get values cmd
+// ExecuteGetValues runs get values cmd.
 func ExecuteGetValues() error {
 	ext, err := client.ParseExtension(gp.format)
-
 	if err != nil {
 		return err
 	}
@@ -53,7 +52,6 @@ func ExecuteGetValues() error {
 	resp, err := client.
 		NewClient(client.Config{URI: gp.source, Profile: gp.profile, Application: gp.application, Label: gp.label}).
 		FetchAs(ext)
-
 	if err != nil {
 		return err
 	}
@@ -62,12 +60,11 @@ func ExecuteGetValues() error {
 		log.Debug("Config server response:")
 		log.Debug(resp)
 
-		if err = ioutil.WriteFile(gp.destination, []byte(resp), 0644); err != nil {
+		if err = os.WriteFile(gp.destination, []byte(resp), 0o600); err != nil {
 			return err
 		}
 
 		log.Debug("Response written to: ", gp.destination)
-
 	} else {
 		fmt.Print(resp)
 	}
@@ -75,13 +72,12 @@ func ExecuteGetValues() error {
 	return nil
 }
 
-// ExecuteGetFiles runs get files cmd
+// ExecuteGetFiles runs get files cmd.
 func ExecuteGetFiles() error {
 	for _, mapping := range gp.fileMappings.Mappings() {
 		resp, err := client.
 			NewClient(client.Config{URI: gp.source, Profile: gp.profile, Application: gp.application, Label: gp.label}).
 			FetchFileE(mapping.source)
-
 		if err != nil {
 			return err
 		}
@@ -94,7 +90,7 @@ func ExecuteGetFiles() error {
 			fmt.Println()
 			log.Debug("Response written to stdout")
 		} else {
-			if err = ioutil.WriteFile(mapping.destination, resp, 0644); err != nil {
+			if err = os.WriteFile(mapping.destination, resp, 0o600); err != nil {
 				return err
 			}
 

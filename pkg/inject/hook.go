@@ -6,21 +6,23 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"path/filepath"
+	"sync"
+	"time"
+
 	"github.com/dimiro1/health"
 	"github.com/fsnotify/fsnotify"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"k8s.io/api/admission/v1beta1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
-	"net/http"
-	"path/filepath"
-	"sync"
-	"time"
 )
 
 var (
@@ -47,13 +49,13 @@ type WebhookConfigDefaults struct {
 	Source        string `yaml:"source,omitempty"`
 }
 
-// InitContainerResourcesList resources for init container
+// InitContainerResourcesList resources for init container.
 type InitContainerResourcesList struct {
 	CPU    string `yaml:"cpu"`
 	Memory string `yaml:"memory"`
 }
 
-// InitContainerResources resources for init container
+// InitContainerResources resources for init container.
 type InitContainerResources struct {
 	Requests InitContainerResourcesList `yaml:"requests"`
 	Limits   InitContainerResourcesList `yaml:"limits"`
@@ -99,7 +101,7 @@ type WebhookParameters struct {
 	Port int
 }
 
-// UnmarshalYAML implements Unmarshaler interface for WebhookConfig
+// UnmarshalYAML implements Unmarshaler interface for WebhookConfig.
 func (w *WebhookConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	type rawWebhookConfig WebhookConfig
 	raw := rawWebhookConfig{
@@ -158,7 +160,8 @@ func NewWebhook(p WebhookParameters) (*Webhook, error) {
 
 	wh := &Webhook{
 		server: &http.Server{
-			Addr: fmt.Sprintf(":%v", p.Port),
+			Addr:              fmt.Sprintf(":%v", p.Port),
+			ReadHeaderTimeout: time.Minute,
 		},
 		config:     config,
 		configFile: p.ConfigFile,
@@ -168,7 +171,7 @@ func NewWebhook(p WebhookParameters) (*Webhook, error) {
 		cert:       &pair,
 	}
 	// mtls disabled because apiserver webhook cert usage is still TBD.
-	wh.server.TLSConfig = &tls.Config{GetCertificate: wh.getCert}
+	wh.server.TLSConfig = &tls.Config{GetCertificate: wh.getCert, MinVersion: tls.VersionTLS12}
 	h := http.NewServeMux()
 	healthHandler := health.NewHandler()
 	healthHandler.AddChecker("webhook", wh)
@@ -179,7 +182,7 @@ func NewWebhook(p WebhookParameters) (*Webhook, error) {
 	return wh, nil
 }
 
-// Run starts the webhook control loop
+// Run starts the webhook control loop.
 func (wh *Webhook) Run(stop <-chan struct{}) {
 	go func() {
 		if err := wh.server.ListenAndServeTLS("", ""); err != nil {
@@ -216,7 +219,7 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 			wh.cert = &pair
 			wh.mu.Unlock()
 		case event := <-wh.watcher.Events:
-			// use a timer to debounce configuration updates
+			// use a timer to debounce configuration updates.
 			if event.Op&fsnotify.Create == fsnotify.Create || event.Op&fsnotify.Write == fsnotify.Write {
 				timerC = time.After(watchDebounceDelay)
 			}
@@ -224,7 +227,7 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 			log.Errorf("Watcher error: %v", err)
 		case <-healthC:
 			content := []byte(`ok`)
-			if err := ioutil.WriteFile(wh.healthCheckFile, content, 0644); err != nil {
+			if err := os.WriteFile(wh.healthCheckFile, content, 0o600); err != nil {
 				log.Errorf("Health check update of %q failed: %v", wh.healthCheckFile, err)
 			}
 		case <-stop:
@@ -236,7 +239,7 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	var body []byte
 	if r.Body != nil {
-		if data, err := ioutil.ReadAll(r.Body); err == nil {
+		if data, err := io.ReadAll(r.Body); err == nil {
 			body = data
 		}
 	}
@@ -282,7 +285,7 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Check check that webhook is up
+// Check check that webhook is up.
 func (wh *Webhook) Check() health.Health {
 	whHealth := health.NewHealth()
 	whHealth.Up()
@@ -368,7 +371,7 @@ func (wh *Webhook) getCert(*tls.ClientHelloInfo) (*tls.Certificate, error) {
 }
 
 func loadConfig(injectFile string) (*WebhookConfig, error) {
-	data, err := ioutil.ReadFile(injectFile)
+	data, err := os.ReadFile(injectFile)
 	if err != nil {
 		return nil, err
 	}

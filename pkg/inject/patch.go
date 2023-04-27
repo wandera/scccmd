@@ -3,8 +3,9 @@ package inject
 import (
 	"encoding/json"
 	"fmt"
-	corev1 "k8s.io/api/core/v1"
 	"strings"
+
+	corev1 "k8s.io/api/core/v1"
 )
 
 type rfc6902PatchOperation struct {
@@ -168,13 +169,13 @@ func updateAnnotation(target map[string]string, added map[string]string) (patch 
 	return patch
 }
 
-// escape JSON Pointer value per https://tools.ietf.org/html/rfc6901
+// escape JSON Pointer value per https://tools.ietf.org/html/rfc6901.
 func escapeJSONPointerValue(in string) string {
 	step := strings.Replace(in, "~", "~0", -1)
 	return strings.Replace(step, "/", "~1", -1)
 }
 
-// CreatePatch creates rfc6902Patch patching the pod
+// CreatePatch creates rfc6902Patch patching the pod.
 func createPatch(pod *corev1.Pod, prevStatus *SidecarInjectionStatus, annotations map[string]string, sic *SidecarInjectionSpec) ([]byte, error) {
 	var patch []rfc6902PatchOperation
 

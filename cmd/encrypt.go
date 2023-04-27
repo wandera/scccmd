@@ -25,7 +25,7 @@ var encryptCmd = &cobra.Command{
 // ExecuteEncrypt runs encrypt cmd.
 func ExecuteEncrypt() error {
 	if ep.value == "" {
-		bytes, err := io.ReadAll(os.Stdin)
+		bytes, err := io.ReadAll(io.LimitReader(io.Reader(os.Stdin), 1024*1024))
 
 		ep.value = string(bytes)
 		if err != nil {

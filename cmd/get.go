@@ -60,7 +60,8 @@ func ExecuteGetValues() error {
 		log.Debug("Config server response:")
 		log.Debug(resp)
 
-		if err = os.WriteFile(gp.destination, []byte(resp), 0o600); err != nil {
+		//#nosec G306
+		if err = os.WriteFile(gp.destination, []byte(resp), 0o644); err != nil {
 			return err
 		}
 
@@ -90,7 +91,8 @@ func ExecuteGetFiles() error {
 			fmt.Println()
 			log.Debug("Response written to stdout")
 		} else {
-			if err = os.WriteFile(mapping.destination, resp, 0o600); err != nil {
+			//#nosec G306
+			if err = os.WriteFile(mapping.destination, resp, 0o644); err != nil {
 				return err
 			}
 

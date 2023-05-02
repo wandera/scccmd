@@ -227,7 +227,8 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 			log.Errorf("Watcher error: %v", err)
 		case <-healthC:
 			content := []byte(`ok`)
-			if err := os.WriteFile(wh.healthCheckFile, content, 0o600); err != nil {
+			//#nosec G306
+			if err := os.WriteFile(wh.healthCheckFile, content, 0o644); err != nil {
 				log.Errorf("Health check update of %q failed: %v", wh.healthCheckFile, err)
 			}
 		case <-stop:

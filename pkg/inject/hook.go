@@ -17,7 +17,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	"k8s.io/api/admission/v1beta1"
+	v1 "k8s.io/api/admission/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -227,7 +227,7 @@ func (wh *Webhook) Run(stop <-chan struct{}) {
 			log.Errorf("Watcher error: %v", err)
 		case <-healthC:
 			content := []byte(`ok`)
-			//#nosec G306
+			// #nosec G306
 			if err := os.WriteFile(wh.healthCheckFile, content, 0o644); err != nil {
 				log.Errorf("Health check update of %q failed: %v", wh.healthCheckFile, err)
 			}
@@ -258,8 +258,8 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var reviewResponse *v1beta1.AdmissionResponse
-	ar := v1beta1.AdmissionReview{}
+	var reviewResponse *v1.AdmissionResponse
+	ar := v1.AdmissionReview{}
 	if _, _, err := deserializer.Decode(body, nil, &ar); err != nil {
 		log.Errorf("Could not decode body: %v", err)
 		reviewResponse = toAdmissionResponse(err)
@@ -267,7 +267,7 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 		reviewResponse = wh.inject(&ar)
 	}
 
-	response := v1beta1.AdmissionReview{}
+	response := v1.AdmissionReview{}
 	if reviewResponse != nil {
 		response.Response = reviewResponse
 		if ar.Request != nil {
@@ -286,7 +286,7 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Check check that webhook is up.
+// Check checks that webhook is up.
 func (wh *Webhook) Check() health.Health {
 	whHealth := health.NewHealth()
 	whHealth.Up()
@@ -308,7 +308,7 @@ func (wh *Webhook) Check() health.Health {
 	return whHealth
 }
 
-func (wh *Webhook) inject(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionResponse {
+func (wh *Webhook) inject(ar *v1.AdmissionReview) *v1.AdmissionResponse {
 	statusKey := wh.config.AnnotationPrefix + "status"
 	injectKey := wh.config.AnnotationPrefix + "inject"
 
@@ -335,7 +335,7 @@ func (wh *Webhook) inject(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionRespons
 
 	if !injectRequired(ignoredNamespaces, wh.config.Policy, &pod.ObjectMeta, injectKey, statusKey) {
 		log.Infof("Skipping %s/%s/%s due to policy check", req.Kind, pod.Namespace, pod.Name)
-		return &v1beta1.AdmissionResponse{
+		return &v1.AdmissionResponse{
 			Allowed: true,
 		}
 	}
@@ -354,11 +354,11 @@ func (wh *Webhook) inject(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionRespons
 
 	log.Debugf("AdmissionResponse: patch=%s", string(patchBytes))
 
-	reviewResponse := v1beta1.AdmissionResponse{
+	reviewResponse := v1.AdmissionResponse{
 		Allowed: true,
 		Patch:   patchBytes,
-		PatchType: func() *v1beta1.PatchType {
-			pt := v1beta1.PatchTypeJSONPatch
+		PatchType: func() *v1.PatchType {
+			pt := v1.PatchTypeJSONPatch
 			return &pt
 		}(),
 	}
@@ -386,8 +386,8 @@ func loadConfig(injectFile string) (*WebhookConfig, error) {
 	return &c, nil
 }
 
-func toAdmissionResponse(err error) *v1beta1.AdmissionResponse {
-	return &v1beta1.AdmissionResponse{Result: &metav1.Status{Message: err.Error()}}
+func toAdmissionResponse(err error) *v1.AdmissionResponse {
+	return &v1.AdmissionResponse{Result: &metav1.Status{Message: err.Error()}}
 }
 
 func init() {

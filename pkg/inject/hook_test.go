@@ -16,7 +16,7 @@ import (
 	"github.com/wandera/scccmd/internal/testcerts"
 	"github.com/wandera/scccmd/internal/testutil"
 	"gopkg.in/yaml.v2"
-	"k8s.io/api/admission/v1beta1"
+	"k8s.io/api/admission/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -212,13 +212,13 @@ func makeTestData(t testing.TB, skip bool) []byte {
 		t.Fatalf("Could not create test pod: %v", err)
 	}
 
-	review := v1beta1.AdmissionReview{
-		Request: &v1beta1.AdmissionRequest{
+	review := v1.AdmissionReview{
+		Request: &v1.AdmissionRequest{
 			Kind: metav1.GroupVersionKind{},
 			Object: runtime.RawExtension{
 				Raw: raw,
 			},
-			Operation: v1beta1.Create,
+			Operation: v1.Create,
 		},
 	}
 	reviewJSON, err := json.Marshal(review)
@@ -433,7 +433,7 @@ func TestRunAndServe(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not read body: %v", err)
 			}
-			var gotReview v1beta1.AdmissionReview
+			var gotReview v1.AdmissionReview
 			if err := json.Unmarshal(gotBody, &gotReview); err != nil {
 				t.Fatalf("could not decode response body: %v", err)
 			}

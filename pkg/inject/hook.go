@@ -267,7 +267,9 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 		reviewResponse = wh.inject(&ar)
 	}
 
-	response := v1.AdmissionReview{}
+	response := v1.AdmissionReview{
+		TypeMeta: ar.TypeMeta,
+	}
 	if reviewResponse != nil {
 		response.Response = reviewResponse
 		if ar.Request != nil {

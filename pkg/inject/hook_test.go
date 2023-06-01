@@ -188,6 +188,11 @@ func TestInjectRequired(t *testing.T) {
 	}
 }
 
+var reviewTypeMeta = metav1.TypeMeta{
+	Kind:       "AdmissionReview",
+	APIVersion: "admission.k8s.io/v1",
+}
+
 func makeTestData(t testing.TB, skip bool) []byte {
 	pod := corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
@@ -213,6 +218,7 @@ func makeTestData(t testing.TB, skip bool) []byte {
 	}
 
 	review := v1.AdmissionReview{
+		TypeMeta: reviewTypeMeta,
 		Request: &v1.AdmissionRequest{
 			Kind: metav1.GroupVersionKind{},
 			Object: runtime.RawExtension{
@@ -402,7 +408,7 @@ func TestRunAndServe(t *testing.T) {
 			body:           []byte{0, 1, 2, 3, 4, 5}, // random data
 			contentType:    "application/json",
 			wantAllowed:    false,
-			wantStatusCode: http.StatusOK,
+			wantStatusCode: http.StatusBadRequest,
 		},
 		{
 			name:           "missing body",
@@ -436,6 +442,10 @@ func TestRunAndServe(t *testing.T) {
 			var gotReview v1.AdmissionReview
 			if err := json.Unmarshal(gotBody, &gotReview); err != nil {
 				t.Fatalf("could not decode response body: %v", err)
+			}
+			if gotReview.TypeMeta.String() != reviewTypeMeta.String() {
+				t.Fatalf("AdmissionReview.TypeMeta is wrong : got %s want %s",
+					gotReview.TypeMeta.String(), reviewTypeMeta.String())
 			}
 			if gotReview.Response.Allowed != c.wantAllowed {
 				t.Fatalf("AdmissionReview.Response.Allowed is wrong : got %v want %v",

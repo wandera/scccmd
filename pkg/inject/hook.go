@@ -262,12 +262,15 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	ar := v1.AdmissionReview{}
 	if _, _, err := deserializer.Decode(body, nil, &ar); err != nil {
 		log.Errorf("Could not decode body: %v", err)
-		reviewResponse = toAdmissionResponse(err)
+		http.Error(w, "could not decode body", http.StatusBadRequest)
+		return
 	} else {
 		reviewResponse = wh.inject(&ar)
 	}
 
-	response := v1.AdmissionReview{}
+	response := v1.AdmissionReview{
+		TypeMeta: ar.TypeMeta,
+	}
 	if reviewResponse != nil {
 		response.Response = reviewResponse
 		if ar.Request != nil {

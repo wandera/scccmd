@@ -263,6 +263,7 @@ func (wh *Webhook) serveInject(w http.ResponseWriter, r *http.Request) {
 	if _, _, err := deserializer.Decode(body, nil, &ar); err != nil {
 		log.Errorf("Could not decode body: %v", err)
 		http.Error(w, "could not decode body", http.StatusBadRequest)
+		return
 	} else {
 		reviewResponse = wh.inject(&ar)
 	}

@@ -402,7 +402,7 @@ func TestRunAndServe(t *testing.T) {
 			body:           []byte{0, 1, 2, 3, 4, 5}, // random data
 			contentType:    "application/json",
 			wantAllowed:    false,
-			wantStatusCode: http.StatusOK,
+			wantStatusCode: http.StatusBadRequest,
 		},
 		{
 			name:           "missing body",

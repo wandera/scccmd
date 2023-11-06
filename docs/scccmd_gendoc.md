@@ -2,10 +2,6 @@
 
 Generates documentation for this tool in Markdown format
 
-### Synopsis
-
-Generates documentation for this tool in Markdown format
-
 ```
 scccmd gendoc [flags]
 ```
@@ -20,7 +16,7 @@ scccmd gendoc [flags]
 ### Options inherited from parent commands
 
 ```
-      --log-level string   command log level (options: [panic fatal error warning info debug]) (default "info")
+      --log-level string   command log level (options: [panic fatal error warning info debug trace]) (default "info")
 ```
 
 ### SEE ALSO

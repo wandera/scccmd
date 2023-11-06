@@ -2,10 +2,6 @@
 
 Diff the config files from the given config server
 
-### Synopsis
-
-Diff the config files from the given config server
-
 ```
 scccmd diff files [flags]
 ```
@@ -22,7 +18,7 @@ scccmd diff files [flags]
 ```
   -a, --application string      name of the application to get the config for
       --label string            configuration label (default "master")
-      --log-level string        command log level (options: [panic fatal error warning info debug]) (default "info")
+      --log-level string        command log level (options: [panic fatal error warning info debug trace]) (default "info")
       --profile string          configuration profile (default "default")
   -s, --source string           address of the config server
       --target-label string     second label to diff with

@@ -11,11 +11,12 @@ Tool currently provides functionality to get (download) config file from server.
 
 ```
   -h, --help               help for scccmd
-      --log-level string   command log level (options: [panic fatal error warning info debug]) (default "info")
+      --log-level string   command log level (options: [panic fatal error warning info debug trace]) (default "info")
 ```
 
 ### SEE ALSO
 
+* [scccmd completion](scccmd_completion.md)	 - Generate the autocompletion script for the specified shell
 * [scccmd decrypt](scccmd_decrypt.md)	 - Decrypt the value server-side and prints the response
 * [scccmd diff](scccmd_diff.md)	 - Diff the config from the given config server
 * [scccmd encrypt](scccmd_encrypt.md)	 - Encrypt the value server-side and prints the response

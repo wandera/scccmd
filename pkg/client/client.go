@@ -98,7 +98,7 @@ func (e HTTPError) Error() string {
 // NewClient creates instance of the Client.
 func NewClient(c Config) Client {
 	r := resty.New().
-		SetHostURL(c.URI).
+		SetBaseURL(c.URI).
 		SetRetryCount(3).
 		SetLogger(log.StandardLogger()).
 		SetRedirectPolicy(resty.NoRedirectPolicy()).

@@ -1,23 +1,33 @@
 version: 2
 updates:
-- package-ecosystem: "docker"
-  directory: "/"
-  schedule:
-    interval: "weekly"
-  reviewers:
-  - "wandera/delta"
-
-- package-ecosystem: "github-actions"
-  directory: "/"
-  schedule:
-    interval: "weekly"
-  reviewers:
-  - "wandera/delta"
-
 - package-ecosystem: "gomod"
   directory: "/"
   schedule:
     interval: "weekly"
   reviewers:
   - "wandera/delta"
-
+  commit-message:
+    prefix: "TRIVIAL: "
+  groups:
+    gomod:
+      patterns:
+      - "*"
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+  reviewers:
+  - "wandera/delta"
+  commit-message:
+    prefix: "TRIVIAL: "
+- package-ecosystem: "docker"
+  directory: "/"
+  schedule:
+    interval: "weekly"
+  reviewers:
+  - "wandera/delta"
+  commit-message:
+    prefix: "TRIVIAL: "
+  ignore:
+  - dependency-name: "*"
+    update-types: ["version-update:semver-major"]

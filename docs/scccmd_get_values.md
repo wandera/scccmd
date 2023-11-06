@@ -2,10 +2,6 @@
 
 Get the config values in specified format from the given config server
 
-### Synopsis
-
-Get the config values in specified format from the given config server
-
 ```
 scccmd get values [flags]
 ```
@@ -23,7 +19,7 @@ scccmd get values [flags]
 ```
   -a, --application string   name of the application to get the config for
   -l, --label string         configuration label (default "master")
-      --log-level string     command log level (options: [panic fatal error warning info debug]) (default "info")
+      --log-level string     command log level (options: [panic fatal error warning info debug trace]) (default "info")
   -p, --profile string       configuration profile (default "default")
   -s, --source string        address of the config server
 ```

@@ -6,8 +6,6 @@ updates:
     interval: "weekly"
   reviewers:
   - "wandera/delta"
-  commit-message:
-    prefix: "TRIVIAL: "
   groups:
     gomod:
       patterns:
@@ -18,16 +16,12 @@ updates:
     interval: "weekly"
   reviewers:
   - "wandera/delta"
-  commit-message:
-    prefix: "TRIVIAL: "
 - package-ecosystem: "docker"
   directory: "/"
   schedule:
     interval: "weekly"
   reviewers:
   - "wandera/delta"
-  commit-message:
-    prefix: "TRIVIAL: "
   ignore:
   - dependency-name: "*"
     update-types: ["version-update:semver-major"]

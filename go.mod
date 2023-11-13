@@ -6,7 +6,7 @@ require (
 	github.com/dimiro1/health v0.0.0-20191019130555-c5cbb4d46ffc
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/go-resty/resty/v2 v2.10.0
-	github.com/onsi/gomega v1.29.0
+	github.com/onsi/gomega v1.30.0
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0

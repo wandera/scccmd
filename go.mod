@@ -8,13 +8,13 @@ require (
 	github.com/dimiro1/health v0.0.0-20231118160444-e388c68d7d7e
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/go-resty/resty/v2 v2.11.0
-	github.com/onsi/gomega v1.30.0
+	github.com/onsi/gomega v1.31.1
 	github.com/pmezard/go-difflib v1.0.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.0
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/api v0.29.0
-	k8s.io/apimachinery v0.29.0
+	k8s.io/api v0.29.1
+	k8s.io/apimachinery v0.29.1
 )
 
 require (

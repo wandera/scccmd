@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -60,7 +61,7 @@ func ExecuteGetValues() error {
 		log.Debug("Config server response:")
 		log.Debug(resp)
 
-		//#nosec G306
+		// #nosec G306
 		if err = os.WriteFile(gp.destination, []byte(resp), 0o644); err != nil {
 			return err
 		}
@@ -78,7 +79,7 @@ func ExecuteGetFiles() error {
 	for _, mapping := range gp.fileMappings.Mappings() {
 		resp, err := client.
 			NewClient(client.Config{URI: gp.source, Profile: gp.profile, Application: gp.application, Label: gp.label}).
-			FetchFileE(mapping.source)
+			FetchFileE(strings.TrimSpace(mapping.source))
 		if err != nil {
 			return err
 		}
@@ -91,7 +92,7 @@ func ExecuteGetFiles() error {
 			fmt.Println()
 			log.Debug("Response written to stdout")
 		} else {
-			//#nosec G306
+			// #nosec G306
 			if err = os.WriteFile(mapping.destination, resp, 0o644); err != nil {
 				return err
 			}

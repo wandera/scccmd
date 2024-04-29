@@ -13,7 +13,7 @@ jobs:
         cache: false
         go-version-file: go.mod
     - name: Lint
-      uses: wandera/golangci-lint-action@v3
+      uses: wandera/golangci-lint-action@v5
       with:
         version: v1.55.1
         args: --out-${NO_FUTURE}format colored-line-number

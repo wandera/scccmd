@@ -21,6 +21,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/utils/ptr"
 )
 
 var (
@@ -264,6 +265,9 @@ func createWebhook(t testing.TB) (*Webhook, func()) {
 				Memory: resource.NewScaledQuantity(50, resource.Mega).String(),
 			},
 		},
+		SecurityContext: InitContainerSecurityContext{
+			AllowPrivilegeEscalation: ptr.To(false),
+		},
 	}
 
 	configBytes, err := yaml.Marshal(config)
@@ -363,7 +367,8 @@ func TestRunAndServe(t *testing.T) {
 				"image":"wanderadock/scccmd",
 				"args":["get","values","--source","http://config-service.default.svc:8080","--application","c1","--profile","default","--label","master","--destination","config.yaml"],
 				"resources":{"limits":{"cpu":"50m","memory":"50M"},"requests":{"cpu":"10m","memory":"10M"}},
-				"volumeMounts":[{"name":"config-volume","mountPath":"/config"}]
+				"volumeMounts":[{"name":"config-volume","mountPath":"/config"}],
+				"securityContext":{"allowPrivilegeEscalation":false}
 			}
 		},
 		{
@@ -464,7 +469,7 @@ func TestRunAndServe(t *testing.T) {
 					t.Fatal(err.Error())
 				}
 			}
-			testutil.AssertString(t, "got bad patch", wantPatch.String(), wantPatch.String())
+			testutil.AssertString(t, "got bad patch", wantPatch.String(), gotPatch.String())
 		})
 	}
 }

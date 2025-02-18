@@ -107,6 +107,9 @@ func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *Webhoo
 						"memory": resource.MustParse(config.Resources.Limits.Memory),
 					},
 				},
+				SecurityContext: &corev1.SecurityContext{
+					AllowPrivilegeEscalation: config.SecurityContext.AllowPrivilegeEscalation,
+				},
 			},
 		},
 		VolumeMounts: []corev1.VolumeMount{volumeMount},

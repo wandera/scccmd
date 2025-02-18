@@ -12,8 +12,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"k8s.io/utils/ptr"
-
 	"github.com/onsi/gomega"
 	"github.com/wandera/scccmd/internal/testcerts"
 	"github.com/wandera/scccmd/internal/testutil"
@@ -23,6 +21,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/utils/ptr"
 )
 
 var (

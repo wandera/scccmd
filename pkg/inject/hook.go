@@ -72,7 +72,7 @@ type WebhookConfig struct {
 	ContainerImage   string                       `yaml:"container-image,omitempty"`
 	Default          WebhookConfigDefaults        `yaml:"default,omitempty"`
 	Resources        InitContainerResources       `yaml:"resources,omitempty"`
-	SecurityContext  InitContainerSecurityContext `yaml:"SecurityContext,omitempty"`
+	SecurityContext  InitContainerSecurityContext `yaml:"securityContext,omitempty"`
 }
 
 // Webhook implements a mutating webhook for automatic config injection.

@@ -61,13 +61,18 @@ type InitContainerResources struct {
 	Limits   InitContainerResourcesList `yaml:"limits"`
 }
 
+type InitContainerSecurityContext struct {
+	AllowPrivilegeEscalation bool `yaml:"allowPrivilegeEscalation,omitempty"`
+}
+
 // WebhookConfig struct representing webhook configuration values.
 type WebhookConfig struct {
-	AnnotationPrefix string                 `yaml:"annotation-prefix,omitempty"`
-	Policy           InjectionPolicy        `yaml:"policy,omitempty"`
-	ContainerImage   string                 `yaml:"container-image,omitempty"`
-	Default          WebhookConfigDefaults  `yaml:"default,omitempty"`
-	Resources        InitContainerResources `yaml:"resources,omitempty"`
+	AnnotationPrefix string                       `yaml:"annotation-prefix,omitempty"`
+	Policy           InjectionPolicy              `yaml:"policy,omitempty"`
+	ContainerImage   string                       `yaml:"container-image,omitempty"`
+	Default          WebhookConfigDefaults        `yaml:"default,omitempty"`
+	Resources        InitContainerResources       `yaml:"resources,omitempty"`
+	SecurityContext  InitContainerSecurityContext `yaml:"SecurityContext,omitempty"`
 }
 
 // Webhook implements a mutating webhook for automatic config injection.
@@ -125,6 +130,9 @@ func (w *WebhookConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
 				CPU:    resource.NewScaledQuantity(100, resource.Milli).String(),
 				Memory: resource.NewScaledQuantity(50, resource.Mega).String(),
 			},
+		},
+		SecurityContext: InitContainerSecurityContext{
+			AllowPrivilegeEscalation: false,
 		},
 	}
 	if err := unmarshal(&raw); err != nil {

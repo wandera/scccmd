@@ -108,7 +108,7 @@ func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *Webhoo
 					},
 				},
 				SecurityContext: &corev1.SecurityContext{
-					AllowPrivilegeEscalation: &config.SecurityContext.AllowPrivilegeEscalation,
+					AllowPrivilegeEscalation: config.SecurityContext.AllowPrivilegeEscalation,
 				},
 			},
 		},

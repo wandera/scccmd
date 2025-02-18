@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"k8s.io/utils/ptr"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -265,7 +266,7 @@ func createWebhook(t testing.TB) (*Webhook, func()) {
 			},
 		},
 		SecurityContext: InitContainerSecurityContext{
-			AllowPrivilegeEscalation: false,
+			AllowPrivilegeEscalation: ptr.To(false),
 		},
 	}
 
@@ -367,7 +368,7 @@ func TestRunAndServe(t *testing.T) {
 				"args":["get","values","--source","http://config-service.default.svc:8080","--application","c1","--profile","default","--label","master","--destination","config.yaml"],
 				"resources":{"limits":{"cpu":"50m","memory":"50M"},"requests":{"cpu":"10m","memory":"10M"}},
 				"volumeMounts":[{"name":"config-volume","mountPath":"/config"}],
-				"securityContext":{"allowPrivilegeEscalation":"false"}
+				"securityContext":{"allowPrivilegeEscalation":false}
 			}
 		},
 		{
@@ -468,7 +469,7 @@ func TestRunAndServe(t *testing.T) {
 					t.Fatal(err.Error())
 				}
 			}
-			testutil.AssertString(t, "got bad patch", wantPatch.String(), wantPatch.String())
+			testutil.AssertString(t, "got bad patch", wantPatch.String(), gotPatch.String())
 		})
 	}
 }

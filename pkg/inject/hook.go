@@ -62,7 +62,7 @@ type InitContainerResources struct {
 }
 
 type InitContainerSecurityContext struct {
-	AllowPrivilegeEscalation bool `yaml:"allowPrivilegeEscalation,omitempty"`
+	AllowPrivilegeEscalation *bool `yaml:"allowPrivilegeEscalation,omitempty"`
 }
 
 // WebhookConfig struct representing webhook configuration values.
@@ -130,9 +130,6 @@ func (w *WebhookConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
 				CPU:    resource.NewScaledQuantity(100, resource.Milli).String(),
 				Memory: resource.NewScaledQuantity(50, resource.Mega).String(),
 			},
-		},
-		SecurityContext: InitContainerSecurityContext{
-			AllowPrivilegeEscalation: false,
 		},
 	}
 	if err := unmarshal(&raw); err != nil {

@@ -6,12 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"k8s.io/utils/ptr"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"k8s.io/utils/ptr"
 
 	"github.com/onsi/gomega"
 	"github.com/wandera/scccmd/internal/testcerts"

@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
-	"k8s.io/api/core/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -28,9 +27,9 @@ type SidecarInjectionStatus struct {
 // SidecarInjectionSpec collects all container types and volumes for
 // sidecar mesh injection.
 type SidecarInjectionSpec struct {
-	InitContainers []v1.Container   `yaml:"initContainers"`
-	VolumeMounts   []v1.VolumeMount `yaml:"volumeMounts"`
-	Volumes        []v1.Volume      `yaml:"volumes"`
+	InitContainers []corev1.Container   `yaml:"initContainers"`
+	VolumeMounts   []corev1.VolumeMount `yaml:"volumeMounts"`
+	Volumes        []corev1.Volume      `yaml:"volumes"`
 }
 
 type dynamicConfig struct {
@@ -59,8 +58,8 @@ const (
 // InjectionStatus extracts the injection status from the pod.
 func injectionStatus(pod *corev1.Pod, annotationStatusKey string) *SidecarInjectionStatus {
 	var statusBytes []byte
-	if pod.ObjectMeta.Annotations != nil {
-		if value, ok := pod.ObjectMeta.Annotations[annotationStatusKey]; ok {
+	if pod.Annotations != nil {
+		if value, ok := pod.Annotations[annotationStatusKey]; ok {
 			statusBytes = []byte(value)
 		}
 	}
@@ -79,7 +78,7 @@ func injectionStatus(pod *corev1.Pod, annotationStatusKey string) *SidecarInject
 	return &SidecarInjectionStatus{}
 }
 
-func injectionData(spec *v1.PodSpec, metadata *metav1.ObjectMeta, config *WebhookConfig) (*SidecarInjectionSpec, string, error) { // nolint: lll
+func injectionData(spec *corev1.PodSpec, metadata *metav1.ObjectMeta, config *WebhookConfig) (*SidecarInjectionSpec, string, error) { // nolint: lll
 	d, err := calculateDynamicConfig(config, metadata.GetAnnotations(), spec)
 	if err != nil {
 		return nil, "", err

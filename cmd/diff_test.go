@@ -135,13 +135,14 @@ func TestExecuteDiffFiles(t *testing.T) {
 	for _, tp := range testParams {
 		func() {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.RequestURI == tp.requestURIA {
+				switch r.RequestURI {
+				case tp.requestURIA:
 					w.WriteHeader(tp.responseCodeA)
 					fmt.Fprintln(w, tp.testContentA)
-				} else if r.RequestURI == tp.requestURIB {
+				case tp.requestURIB:
 					w.WriteHeader(tp.responseCodeB)
 					fmt.Fprintln(w, tp.testContentB)
-				} else {
+				default:
 					t.Errorf("Expected call to '%s' or '%s', but got '%s' instead.", tp.requestURIA, tp.requestURIB, r.RequestURI)
 				}
 			}))
@@ -239,11 +240,12 @@ func TestExecuteDiffValues(t *testing.T) {
 	for _, tp := range testParams {
 		func() {
 			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.RequestURI == tp.requestURIA {
+				switch r.RequestURI {
+				case tp.requestURIA:
 					fmt.Fprintln(w, tp.testContentA)
-				} else if r.RequestURI == tp.requestURIB {
+				case tp.requestURIB:
 					fmt.Fprintln(w, tp.testContentB)
-				} else {
+				default:
 					t.Errorf("Expected call to '%s' or '%s', but got '%s' instead.", tp.requestURIA, tp.requestURIB, r.RequestURI)
 				}
 			}))

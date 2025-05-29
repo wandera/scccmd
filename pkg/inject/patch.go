@@ -171,8 +171,8 @@ func updateAnnotation(target map[string]string, added map[string]string) (patch 
 
 // escape JSON Pointer value per https://tools.ietf.org/html/rfc6901.
 func escapeJSONPointerValue(in string) string {
-	step := strings.Replace(in, "~", "~0", -1)
-	return strings.Replace(step, "/", "~1", -1)
+	step := strings.ReplaceAll(in, "~", "~0")
+	return strings.ReplaceAll(step, "/", "~1")
 }
 
 // CreatePatch creates rfc6902Patch patching the pod.

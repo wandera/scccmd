@@ -22,5 +22,5 @@ func executeGenDoc() error {
 
 func init() {
 	genDocCmd.Flags().StringVarP(&docDestination, "destination", "d", "", "destination for documentation")
-	_ = genDocCmd.MarkFlagRequired("destination")
+	_ = genDocCmd.MarkFlagRequired("destination") // #nosec G104
 }

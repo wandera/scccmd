@@ -47,5 +47,5 @@ func ExecuteEncrypt() error {
 func init() {
 	encryptCmd.Flags().StringVarP(&ep.source, "source", "s", "", "address of the config server")
 	encryptCmd.Flags().StringVar(&ep.value, "value", "", "value to encrypt *WARNING* unsafe use standard-in instead")
-	_ = encryptCmd.MarkFlagRequired("source")
+	_ = encryptCmd.MarkFlagRequired("source") // #nosec G104
 }

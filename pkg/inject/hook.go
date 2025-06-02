@@ -380,12 +380,12 @@ func (wh *Webhook) getCert(*tls.ClientHelloInfo) (*tls.Certificate, error) {
 }
 
 func loadConfig(injectFile string) (*WebhookConfig, error) {
-	data, err := os.ReadFile(injectFile)
+	data, err := os.ReadFile(injectFile) // #nosec G304
 	if err != nil {
 		return nil, err
 	}
 	var c WebhookConfig
-	if err := yaml.Unmarshal(data, &c); err != nil { // nolint: vetshadow
+	if err := yaml.Unmarshal(data, &c); err != nil {
 		return nil, err
 	}
 
@@ -399,5 +399,5 @@ func toAdmissionResponse(err error) *v1.AdmissionResponse {
 }
 
 func init() {
-	_ = corev1.AddToScheme(runtimeScheme)
+	_ = corev1.AddToScheme(runtimeScheme) // #nosec G104
 }

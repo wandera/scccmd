@@ -164,12 +164,12 @@ func init() {
 	diffCmd.PersistentFlags().StringVar(&diffp.label, "label", "master", "configuration label")
 	diffCmd.PersistentFlags().StringVar(&diffp.targetLabel, "target-label", "", "second label to diff with")
 	diffCmd.PersistentFlags().StringVar(&diffp.targetProfile, "target-profile", "", "second profile to diff with, --profile value will be used, if not defined")
-	_ = diffCmd.MarkPersistentFlagRequired("source")
-	_ = diffCmd.MarkPersistentFlagRequired("application")
-	_ = diffCmd.MarkPersistentFlagRequired("target-label")
+	_ = diffCmd.MarkPersistentFlagRequired("source")       // #nosec G104
+	_ = diffCmd.MarkPersistentFlagRequired("application")  // #nosec G104
+	_ = diffCmd.MarkPersistentFlagRequired("target-label") // #nosec G104
 
 	diffFilesCmd.Flags().StringVarP(&diffp.files, "files", "f", "", "files to get in form of file1,file2, example '--files application.yaml,config.yaml'")
-	_ = diffFilesCmd.MarkFlagRequired("files")
+	_ = diffFilesCmd.MarkFlagRequired("files") // #nosec G104
 
 	diffValuesCmd.Flags().StringVarP(&diffp.format, "format", "f", "yaml", "output format might be one of 'json|yaml|properties'")
 }

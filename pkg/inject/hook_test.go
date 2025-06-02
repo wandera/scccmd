@@ -210,7 +210,7 @@ func makeTestData(t testing.TB, skip bool) []byte {
 	}
 
 	if skip {
-		pod.ObjectMeta.Annotations[annotationInjectKey] = "false"
+		pod.Annotations[annotationInjectKey] = "false"
 	}
 
 	raw, err := json.Marshal(&pod)
@@ -283,18 +283,18 @@ func createWebhook(t testing.TB) (*Webhook, func()) {
 		port       = 0
 	)
 
-	if err := os.WriteFile(configFile, configBytes, 0o644); err != nil { // nolint: vetshadow
+	if err := os.WriteFile(configFile, configBytes, 0o644); err != nil {
 		cleanup()
 		t.Fatalf("WriteFile(%v) failed: %v", configFile, err)
 	}
 
 	// cert
-	if err := os.WriteFile(certFile, testcerts.ServerCert, 0o644); err != nil { // nolint: vetshadow
+	if err := os.WriteFile(certFile, testcerts.ServerCert, 0o644); err != nil {
 		cleanup()
 		t.Fatalf("WriteFile(%v) failed: %v", certFile, err)
 	}
 	// key
-	if err := os.WriteFile(keyFile, testcerts.ServerKey, 0o644); err != nil { // nolint: vetshadow
+	if err := os.WriteFile(keyFile, testcerts.ServerKey, 0o644); err != nil {
 		cleanup()
 		t.Fatalf("WriteFile(%v) failed: %v", keyFile, err)
 	}
@@ -482,11 +482,11 @@ func TestReloadCert(t *testing.T) {
 	go wh.Run(stop)
 	checkCert(t, wh, testcerts.ServerCert, testcerts.ServerKey)
 	// Update cert/key files.
-	if err := os.WriteFile(wh.certFile, rotatedCert, 0o644); err != nil { // nolint: vetshadow
+	if err := os.WriteFile(wh.certFile, rotatedCert, 0o644); err != nil {
 		cleanup()
 		t.Fatalf("WriteFile(%v) failed: %v", wh.certFile, err)
 	}
-	if err := os.WriteFile(wh.keyFile, rotatedKey, 0o644); err != nil { // nolint: vetshadow
+	if err := os.WriteFile(wh.keyFile, rotatedKey, 0o644); err != nil {
 		cleanup()
 		t.Fatalf("WriteFile(%v) failed: %v", wh.keyFile, err)
 	}

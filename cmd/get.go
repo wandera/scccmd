@@ -88,7 +88,7 @@ func ExecuteGetFiles() error {
 		log.Debug(string(resp))
 
 		if mapping.destination == stdoutPlaceholder {
-			_, _ = os.Stdout.Write(resp)
+			_, _ = os.Stdout.Write(resp) // #nosec G104
 			fmt.Println()
 			log.Debug("Response written to stdout")
 		} else {
@@ -110,11 +110,11 @@ func init() {
 	getCmd.PersistentFlags().StringVarP(&gp.application, "application", "a", "", "name of the application to get the config for")
 	getCmd.PersistentFlags().StringVarP(&gp.profile, "profile", "p", "default", "configuration profile")
 	getCmd.PersistentFlags().StringVarP(&gp.label, "label", "l", "master", "configuration label")
-	_ = getCmd.MarkPersistentFlagRequired("source")
-	_ = getCmd.MarkPersistentFlagRequired("application")
+	_ = getCmd.MarkPersistentFlagRequired("source")      // #nosec G104
+	_ = getCmd.MarkPersistentFlagRequired("application") // #nosec G104
 
 	getFilesCmd.Flags().VarP(&gp.fileMappings, "files", "f", "files to get in form of source:destination pairs, you can use - as a output to stdout, example '--files application.yaml:config.yaml'")
-	_ = getFilesCmd.MarkFlagRequired("files")
+	_ = getFilesCmd.MarkFlagRequired("files") // #nosec G104
 
 	getValuesCmd.Flags().StringVarP(&gp.format, "format", "f", "yaml", "output format might be one of 'json|yaml|properties'")
 	getValuesCmd.Flags().StringVarP(&gp.destination, "destination", "d", "", "destination file name")

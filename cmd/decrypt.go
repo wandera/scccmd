@@ -47,5 +47,5 @@ func ExecuteDecrypt() error {
 func init() {
 	decryptCmd.Flags().StringVarP(&dp.source, "source", "s", "", "address of the config server")
 	decryptCmd.Flags().StringVar(&dp.value, "value", "", "value to decrypt *WARNING* unsafe use standard-in instead")
-	_ = decryptCmd.MarkFlagRequired("source")
+	_ = decryptCmd.MarkFlagRequired("source") // #nosec G104
 }
